@@ -1,5 +1,5 @@
 import { Float, Text } from '@react-three/drei'
-import monoFont from '@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff'
+
 
 const vanillaCode = `
 import * as THREE from 'three'
@@ -63,6 +63,25 @@ export default function App() {
 }
 `.trim()
 
+const atmosOriginal = {
+    title: 'Atmos (original)',
+    tech: 'Three.js + GSAP',
+    points: ['scene, camera and loop set up by hand', 'GSAP for the animations', 'source: Awwwards case study'],
+}
+
+const atmosRebuild = {
+    title: 'Atmos rebuild (Wawa Sensei)',
+    tech: 'React Three Fiber',
+    points: ['curved path', 'environment map', '3D text and UI', 'source: wawasensei.dev'],
+}
+
+const thisPresentation = {
+    title: 'This presentation',
+    tech: 'React Three Fiber (by me)',
+    points: ['curve + useScroll()', 'camera follows with useFrame', 'drei <Text> for every title'],
+}
+
+
 const alternatives = [
     { name: 'Babylon.js', note: 'full game engine', color: '#bb464b' },
     { name: 'A-Frame', note: 'HTML tags, VR', color: '#ef2d5e' },
@@ -71,20 +90,30 @@ const alternatives = [
     { name: 'Spline', note: 'no-code design tool', color: '#7c5cff' },
 ]
 
-function CodePanel({ x, title, code, fontSize }) {
-    const lineCount = code.split('\n').length
-
+function Card({ x, y, card, color }) {
     return (
-        <group position={[x, 0, 0]}>
-            <Text position={[0, 1.2, 0]} fontSize={0.6} anchorX="left" anchorY="bottom" color="black">
-                {`${title} · ${lineCount} lines`}
+        <group position={[x, y, 0]}>
+            <mesh position={[5.3, -2.2, -0.05]}>
+                <planeGeometry args={[11, 5.4]} />
+                <meshBasicMaterial color="#f2f2f2" />
+            </mesh>
+            <mesh position={[-0.1, -2.2, -0.04]}>
+                <planeGeometry args={[0.2, 5.4]} />
+                <meshBasicMaterial color={color} />
+            </mesh>
+            <Text position={[0.4, 0, 0]} fontSize={0.7} anchorX="left" anchorY="top" color="black">
+                {card.title}
             </Text>
-            <Text font={monoFont} fontSize={fontSize} anchorX="left" anchorY="top" color="#222">
-                {code}
+            <Text position={[0.4, -1, 0]} fontSize={0.45} anchorX="left" anchorY="top" color={color}>
+                {card.tech}
+            </Text>
+            <Text position={[0.4, -1.8, 0]} fontSize={0.38} lineHeight={1.4} anchorX="left" anchorY="top" color="#333">
+                {card.points.map((point) => `• ${point}`).join('\n')}
             </Text>
         </group>
     )
 }
+
 
 function Island({ x, name, note, color }) {
     return (
@@ -106,8 +135,10 @@ function Island({ x, name, note, color }) {
 export default function Comparison() {
     return (
         <group>
-            <CodePanel x={-14} title="Three.js" code={vanillaCode} fontSize={0.25} />
-            <CodePanel x={16} title="React Three Fiber" code={r3fCode} fontSize={0.32} />
+            <Card x={-15} y={1} card={atmosOriginal} color="#049ef4" />
+            <Card x={17} y={1} card={atmosRebuild} color="#e91e63" />
+            <Card x={17} y={-5.5} card={thisPresentation} color="#e91e63" />
+
             {alternatives.map((alt, index) => (
                 <Island key={alt.name} x={index * 3.5} name={alt.name} note={alt.note} color={alt.color} />
             ))}
