@@ -1,18 +1,20 @@
 import { Canvas, useFrame } from '@react-three/fiber'
-import { ScrollControls, useScroll, Line, Text } from '@react-three/drei'
-
-
+import { ScrollControls, useScroll, Line } from '@react-three/drei'
+import { configureTextBuilder } from 'troika-three-text'
+import bodyFont from '@fontsource/inter/files/inter-latin-400-normal.woff'
 import { Model } from '../Model'
 import { CatmullRomCurve3, Vector3 } from 'three'
 import { easing } from 'maath'
 import WhatIsR3F from './WhatIsR3F'
 import CoreFeatures from './CoreFeatures'
 import Comparison from './Comparison'
+import Conclusion from './Conclusion'
 import Hangar from './Hangar'
 import { useRef, useState } from 'react'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
+import { Leva } from 'leva'
 
-
+configureTextBuilder({ defaultFontURL: bodyFont })
 
 const curve = new CatmullRomCurve3([
     new Vector3(0, 0, 0),
@@ -24,7 +26,19 @@ const curve = new CatmullRomCurve3([
     new Vector3(0, 0, -180),
 ])
 
+const titles = [
+    { title: 'React Three Fiber', subtitle: 'Scroll to begin' },
+    { title: 'What is R3F?' },
+    { title: 'Core features' },
+    { title: 'Comparison' },
+    { title: 'Research approach' },
+    { title: 'The demo' },
+    { title: 'Conclusion' },
+    { title: 'Thank you!', subtitle: 'Questions?' },
+]
+
 const CHAPTER_COUNT = 7
+const FINALE = 7
 
 function chapterPlacement(index) {
     const t = index / (CHAPTER_COUNT - 1)
@@ -48,21 +62,21 @@ function toWorld(index, local) {
 
 const demoCamera = toWorld(5, [-12, 3, 16])
 const demoLookAt = toWorld(5, [-12, -7, 0])
+const finaleCamera = new Vector3(70, 110, 20)
+const finaleLookAt = new Vector3(0, 0, -90)
 
 
-function Chapter({ index, title, children }) {
+
+function Chapter({ index, children }) {
     const ref = useRef()
     const scroll = useScroll()
     const { t, position, facing } = chapterPlacement(index)
 
     useFrame(() => {
-        ref.current.visible = Math.abs(scroll.offset - t) < 0.12
+        ref.current.visible = Math.abs(scroll.offset - t) < 0.12 || scroll.offset > 0.97
     })
     return (
         <group ref={ref} position={position} rotation={[0, facing, 0]}>
-            <Text position={[0, 3, 0]} fontSize={1.5} maxWidth={10} textAlign="center" anchorY="bottom" color="black">
-                {title}
-            </Text>
             {children}
         </group>
     )
@@ -113,14 +127,19 @@ function CameraRig() {
         const tangent = curve.getTangentAt(scroll.offset)
 
         const demoWeight = scroll.curve(0.75, 0.16)
+        const finaleWeight = scroll.range(0.94, 0.06)
+
 
         const behind = tangent.clone().multiplyScalar(-12)
         const above = new Vector3(0, 4, 0)
         const cameraGoal = point.clone().add(behind).add(above).lerp(demoCamera, demoWeight)
+        cameraGoal.lerp(finaleCamera, finaleWeight)
+
         easing.damp3(state.camera.position, cameraGoal, 0.4, delta)
 
         const ahead = tangent.clone().multiplyScalar(5)
         const lookGoal = point.clone().add(ahead).lerp(demoLookAt, demoWeight)
+        lookGoal.lerp(finaleLookAt, finaleWeight)
         easing.damp3(lookTarget.current, lookGoal, 0.4, delta)
 
         state.camera.lookAt(lookTarget.current)
@@ -128,6 +147,24 @@ function CameraRig() {
 
     return null
 }
+
+function TitleWatcher({ current, onChange }) {
+    const scroll = useScroll()
+
+    useFrame(() => {
+        let title = null
+        if (scroll.offset > 0.97) {
+            title = FINALE
+        } else {
+            const nearest = Math.round(scroll.offset * (CHAPTER_COUNT - 1))
+            if (Math.abs(scroll.offset - nearest / (CHAPTER_COUNT - 1)) < 0.07) title = nearest
+        }
+        if (title !== current) onChange(title)
+    })
+
+    return null
+}
+
 
 function DemoWatcher({ active, onChange }) {
     const scroll = useScroll()
@@ -145,6 +182,7 @@ export default function Presentation() {
     const [crates, setCrates] = useState([])
     const [night, setNight] = useState(false)
     const [demoActive, setDemoActive] = useState(false)
+    const [currentTitle, setCurrentTitle] = useState(0)
 
     function changeDemoActive(isActive) {
         setDemoActive(isActive)
@@ -172,30 +210,29 @@ export default function Presentation() {
                 <ScrollControls pages={7} damping={0.2}>
                     <Plane />
                     <CameraRig />
+                    <TitleWatcher current={currentTitle} onChange={setCurrentTitle} />
                     <DemoWatcher active={demoActive} onChange={changeDemoActive} />
 
-                    <Chapter index={0} title="React Three Fiber">
+                    <Chapter index={0}>
                         <Placeholder color="orange" />
                     </Chapter>
-                    <Chapter index={1} title="What is R3F?">
+                    <Chapter index={1}>
                         <WhatIsR3F />
                     </Chapter>
-                    <Chapter index={2} title="Core features">
+                    <Chapter index={2}>
                         <CoreFeatures />
                     </Chapter>
-                    <Chapter index={3} title="Comparison">
+                    <Chapter index={3}>
                         <Comparison />
                     </Chapter>
-                    <Chapter index={4} title="Research approach">
+                    <Chapter index={4}>
                         <Placeholder color="deepskyblue" />
                     </Chapter>
-                    <Chapter index={5} title="The demo">
+                    <Chapter index={5}>
                         <Hangar crates={crates} night={night} active={demoActive} />
-
-
                     </Chapter>
-                    <Chapter index={6} title="Conclusion">
-                        <Placeholder color="hotpink" />
+                    <Chapter index={6}>
+                        <Conclusion />
                     </Chapter>
                 </ScrollControls>
 
@@ -206,6 +243,17 @@ export default function Presentation() {
                 )}
 
             </Canvas>
+
+            <Leva hidden={currentTitle !== 2} titleBar={{ position: { x: 0, y: 140 } }} />
+
+            <div className={night ? 'titles night' : 'titles'}>
+                {titles.map((item, index) => (
+                    <div key={item.title} className={index === currentTitle ? 'chapter-title visible' : 'chapter-title'}>
+                        <h1>{item.title}</h1>
+                        {item.subtitle && <p>{item.subtitle}</p>}
+                    </div>
+                ))}
+            </div>
 
             {demoActive && (
                 <div className="demo-ui">

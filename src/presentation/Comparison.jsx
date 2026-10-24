@@ -90,7 +90,7 @@ const alternatives = [
     { name: 'Spline', note: 'no-code design tool', color: '#7c5cff' },
 ]
 
-function Card({ x, y, card, color }) {
+export function Card({ x, y, card, color }) {
     return (
         <group position={[x, y, 0]}>
             <mesh position={[5.3, -2.2, -0.05]}>
@@ -117,7 +117,7 @@ function Card({ x, y, card, color }) {
 
 function Island({ x, name, note, color }) {
     return (
-        <Float position={[x, 8, 0]} speed={2} floatIntensity={1.5}>
+        <Float position={[x, 5.5, 0]} speed={2} floatIntensity={1.5}>
             <mesh>
                 <cylinderGeometry args={[1.4, 0.8, 0.6, 6]} />
                 <meshStandardMaterial color={color} />
