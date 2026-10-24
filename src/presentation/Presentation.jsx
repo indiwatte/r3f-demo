@@ -1,7 +1,8 @@
 import { Canvas, useFrame } from '@react-three/fiber'
-import { ScrollControls, useScroll, Line } from '@react-three/drei'
+import { ScrollControls, useScroll, Line, Text, Billboard } from '@react-three/drei'
 import { configureTextBuilder } from 'troika-three-text'
 import bodyFont from '@fontsource/inter/files/inter-latin-400-normal.woff'
+import titleFont from '@fontsource/unbounded/files/unbounded-latin-800-normal.woff'
 import { Model } from '../Model'
 import { CatmullRomCurve3, Vector3 } from 'three'
 import { easing } from 'maath'
@@ -11,7 +12,7 @@ import Comparison from './Comparison'
 import Conclusion from './Conclusion'
 import Hangar from './Hangar'
 import { useRef, useState } from 'react'
-import { EffectComposer, Bloom } from '@react-three/postprocessing'
+import { EffectComposer, Bloom, Noise, Vignette } from '@react-three/postprocessing'
 import { Leva } from 'leva'
 
 configureTextBuilder({ defaultFontURL: bodyFont })
@@ -67,18 +68,68 @@ const finaleLookAt = new Vector3(0, 0, -90)
 
 
 
-function Chapter({ index, children }) {
+function ChapterTitle({ index, x, y, color }) {
+    const ref = useRef()
+    const scroll = useScroll()
+    const t = index / (CHAPTER_COUNT - 1)
+    const { title, subtitle } = titles[index]
+
+    useFrame(() => {
+        const distance = Math.abs(scroll.offset - t)
+        const appear = 1 - Math.min(Math.max((distance - 0.02) / 0.06, 0), 1)
+        ref.current.position.y = y - (1 - appear) * 2
+        ref.current.children.forEach((text) => (text.fillOpacity = appear))
+    })
+
+    return (
+        <group ref={ref} position={[x, y, 0]}>
+            <Text font={titleFont} fontSize={2} maxWidth={40} textAlign="center" anchorY="bottom" color={color}>
+                {title}
+            </Text>
+            {subtitle && (
+                <Text position={[0, -0.6, 0]} fontSize={0.6} letterSpacing={0.15} anchorY="top" color={color}>
+                    {subtitle.toUpperCase()}
+                </Text>
+            )}
+        </group>
+    )
+}
+
+function Chapter({ index, titleX, titleY = 9, titleColor = '#111', children }) {
     const ref = useRef()
     const scroll = useScroll()
     const { t, position, facing } = chapterPlacement(index)
+    const side = index % 2 === 0 ? 1 : -1
 
     useFrame(() => {
         ref.current.visible = Math.abs(scroll.offset - t) < 0.12 || scroll.offset > 0.97
     })
     return (
         <group ref={ref} position={position} rotation={[0, facing, 0]}>
+            <ChapterTitle index={index} x={titleX ?? -7 * side} y={titleY} color={titleColor} />
             {children}
         </group>
+    )
+}
+
+function Finale() {
+    const ref = useRef()
+    const scroll = useScroll()
+    const { title, subtitle } = titles[FINALE]
+
+    useFrame(() => {
+        ref.current.visible = scroll.offset > 0.97
+    })
+
+    return (
+        <Billboard ref={ref} position={[-20, 60, -110]}>
+            <Text font={titleFont} fontSize={12} color="#111" anchorY="bottom">
+                {title}
+            </Text>
+            <Text position={[0, -2, 0]} fontSize={4} letterSpacing={0.15} color="#e91e63" anchorY="top">
+                {subtitle.toUpperCase()}
+            </Text>
+        </Billboard>
     )
 }
 
@@ -211,6 +262,7 @@ export default function Presentation() {
                     <Plane />
                     <CameraRig />
                     <TitleWatcher current={currentTitle} onChange={setCurrentTitle} />
+                    <Finale />
                     <DemoWatcher active={demoActive} onChange={changeDemoActive} />
 
                     <Chapter index={0}>
@@ -228,7 +280,7 @@ export default function Presentation() {
                     <Chapter index={4}>
                         <Placeholder color="deepskyblue" />
                     </Chapter>
-                    <Chapter index={5}>
+                    <Chapter index={5} titleX={-12} titleY={-1} titleColor={night ? 'white' : '#111'}>
                         <Hangar crates={crates} night={night} active={demoActive} />
                     </Chapter>
                     <Chapter index={6}>
@@ -236,24 +288,15 @@ export default function Presentation() {
                     </Chapter>
                 </ScrollControls>
 
-                {night && (
-                    <EffectComposer>
-                        <Bloom luminanceThreshold={1} intensity={1.5} mipmapBlur />
-                    </EffectComposer>
-                )}
+                <EffectComposer>
+                    {night && <Bloom luminanceThreshold={1} intensity={1.5} mipmapBlur />}
+                    <Noise opacity={0.06} />
+                    <Vignette offset={0.3} darkness={0.5} />
+                </EffectComposer>
 
             </Canvas>
 
             <Leva hidden={currentTitle !== 2} titleBar={{ position: { x: 0, y: 140 } }} />
-
-            <div className={night ? 'titles night' : 'titles'}>
-                {titles.map((item, index) => (
-                    <div key={item.title} className={index === currentTitle ? 'chapter-title visible' : 'chapter-title'}>
-                        <h1>{item.title}</h1>
-                        {item.subtitle && <p>{item.subtitle}</p>}
-                    </div>
-                ))}
-            </div>
 
             {demoActive && (
                 <div className="demo-ui">

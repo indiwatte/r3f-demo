@@ -27,46 +27,6 @@ body,
   cursor: pointer;
 }
 
-.chapter-title {
-  position: fixed;
-  top: 6vh;
-  left: 0;
-  right: 0;
-  z-index: 5;
-  text-align: center;
-  color: #111;
-  pointer-events: none;
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.6s, transform 0.6s;
-}
-
-.chapter-title.visible {
-  opacity: 1;
-  transform: none;
-}
-
-.chapter-title h1 {
-  margin: 0;
-  font-family: 'seabass-vf', system-ui, sans-serif;
-  font-weight: 700;
-  font-size: clamp(2.5rem, 6vw, 5.5rem);
-  line-height: 1;
-}
-
-.chapter-title p {
-  margin: 0.6rem 0 0;
-  font-family: system-ui, sans-serif;
-  font-size: 1rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  opacity: 0.6;
-}
-
-.titles.night .chapter-title {
-  color: white;
-}
-
 .demo-ui span {
   padding: 10px 12px;
   border-radius: 8px;
