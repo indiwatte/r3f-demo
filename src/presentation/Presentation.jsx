@@ -10,6 +10,8 @@ import CoreFeatures from './CoreFeatures'
 import Comparison from './Comparison'
 import Hangar from './Hangar'
 import { useRef, useState } from 'react'
+import { EffectComposer, Bloom } from '@react-three/postprocessing'
+
 
 
 const curve = new CatmullRomCurve3([
@@ -127,9 +129,28 @@ function CameraRig() {
     return null
 }
 
+function DemoWatcher({ active, onChange }) {
+    const scroll = useScroll()
+
+    useFrame(() => {
+        const isActive = scroll.visible(0.78, 0.1)
+        if (isActive !== active) onChange(isActive)
+    })
+
+    return null
+}
+
 
 export default function Presentation() {
     const [crates, setCrates] = useState([])
+    const [night, setNight] = useState(false)
+    const [demoActive, setDemoActive] = useState(false)
+
+    function changeDemoActive(isActive) {
+        setDemoActive(isActive)
+        if (!isActive) setNight(false)
+    }
+
 
     function dropCrate() {
         const crate = { id: Date.now(), x: -17 + Math.random() * 10, z: -3 + Math.random() * 6 }
@@ -143,13 +164,16 @@ export default function Presentation() {
     return (
         <>
             <Canvas camera={{ position: [8, 4, 10] }}>
-                <ambientLight />
-                <directionalLight position={[3, 3, 3]} />
+                <color attach="background" args={[night ? '#0b1020' : 'white']} />
+                <ambientLight intensity={night ? 0.15 : 1} />
+                <directionalLight position={[3, 3, 3]} intensity={night ? 0.1 : 1} />
                 <FlightPath />
 
                 <ScrollControls pages={7} damping={0.2}>
                     <Plane />
                     <CameraRig />
+                    <DemoWatcher active={demoActive} onChange={changeDemoActive} />
+
                     <Chapter index={0} title="React Three Fiber">
                         <Placeholder color="orange" />
                     </Chapter>
@@ -166,19 +190,31 @@ export default function Presentation() {
                         <Placeholder color="deepskyblue" />
                     </Chapter>
                     <Chapter index={5} title="The demo">
-                        <Hangar crates={crates} />
+                        <Hangar crates={crates} night={night} active={demoActive} />
+
+
                     </Chapter>
                     <Chapter index={6} title="Conclusion">
                         <Placeholder color="hotpink" />
                     </Chapter>
                 </ScrollControls>
+
+                {night && (
+                    <EffectComposer>
+                        <Bloom luminanceThreshold={1} intensity={1.5} mipmapBlur />
+                    </EffectComposer>
+                )}
+
             </Canvas>
 
-            <div className="demo-ui">
-                <button onClick={dropCrate}>Drop crate</button>
-                <button onClick={reset}>Reset</button>
-                <span>{crates.length} crates</span>
-            </div>
+            {demoActive && (
+                <div className="demo-ui">
+                    <button onClick={dropCrate}>Drop crate</button>
+                    <button onClick={reset}>Reset</button>
+                    <button onClick={() => setNight(!night)}>{night ? 'Day mode' : 'Night mode'}</button>
+                    <span>{crates.length} crates</span>
+                </div>
+            )}
         </>
     )
 }
