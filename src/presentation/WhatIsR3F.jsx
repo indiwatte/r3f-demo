@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll, Text } from '@react-three/drei'
 import monoFont from '@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff'
+import { colors } from './theme'
+
 
 const codeLines = [
     '<Canvas>',
@@ -27,11 +29,11 @@ export default function WhatIsR3F() {
 
     return (
         <group>
-            <Text font={monoFont} position={[-12, 1.5, 0]} fontSize={0.45} anchorX="left" anchorY="top" color="#222">
+            <Text font={monoFont} position={[-20, 2, 0]} fontSize={0.7} lineHeight={1.3} color={colors.ink}>
                 {codeLines.slice(0, visibleLines).join('\n')}
             </Text>
             {hasGeometry && (
-                <mesh position={[2, 0, 0]}>
+                <mesh position={[1, 0, 0]}>
                     <boxGeometry args={[2, 2, 2]} />
                     {hasMaterial ? <meshStandardMaterial color="orange" /> : <meshBasicMaterial color="gray" wireframe />}
                 </mesh>

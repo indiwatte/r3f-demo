@@ -1,10 +1,13 @@
 import { Canvas, useFrame } from '@react-three/fiber'
-import { ScrollControls, useScroll, Line, Text, Billboard } from '@react-three/drei'
+import { ScrollControls, useScroll, Line, Text, Billboard, GradientTexture, Grid } from '@react-three/drei'
+
+
 import { configureTextBuilder } from 'troika-three-text'
 import bodyFont from '@fontsource/inter/files/inter-latin-400-normal.woff'
 import titleFont from '@fontsource/unbounded/files/unbounded-latin-800-normal.woff'
-import { Model } from '../Model'
-import { CatmullRomCurve3, Vector3 } from 'three'
+import { Spaceship } from '../Spaceship'
+
+import { CatmullRomCurve3, Vector3, BackSide } from 'three'
 import { easing } from 'maath'
 import WhatIsR3F from './WhatIsR3F'
 import CoreFeatures from './CoreFeatures'
@@ -15,6 +18,10 @@ import ResearchApproach from './ResearchApproach'
 import { useRef, useState } from 'react'
 import { EffectComposer, Bloom, Noise, Vignette } from '@react-three/postprocessing'
 import { Leva } from 'leva'
+
+
+import { colors } from './theme'
+
 
 configureTextBuilder({ defaultFontURL: bodyFont })
 
@@ -96,14 +103,32 @@ function ChapterTitle({ index, x, y, color }) {
     )
 }
 
-function Chapter({ index, titleX, titleY = 9, titleColor = '#111', children }) {
+function clamp01(value) {
+    return Math.min(Math.max(value, 0), 1)
+}
+
+
+function Chapter({ index, titleX, titleY = 9, titleColor = '#111', fade = true, children }) {
     const ref = useRef()
     const scroll = useScroll()
     const { t, position, facing } = chapterPlacement(index)
     const side = index % 2 === 0 ? 1 : -1
 
     useFrame(() => {
-        ref.current.visible = Math.abs(scroll.offset - t) < 0.09 || scroll.offset > 0.97
+        const distance = scroll.offset - t
+        const fadeIn = clamp01((distance + 0.12) / 0.05)
+        const fadeOut = clamp01((0.07 - distance) / 0.03)
+        const opacity = scroll.offset > 0.97 ? 1 : Math.min(fadeIn, fadeOut)
+
+        ref.current.visible = opacity > 0
+        if (!fade) return
+
+        ref.current.traverse((object) => {
+            if (!object.material) return
+            object.userData.baseOpacity ??= object.material.opacity
+            object.material.opacity = object.userData.baseOpacity * opacity
+            object.material.transparent = object.material.opacity < 1
+        })
     })
     return (
         <group ref={ref} position={position} rotation={[0, facing, 0]}>
@@ -147,8 +172,65 @@ function Placeholder({ color }) {
 
 
 function FlightPath() {
-    return <Line points={curve.getPoints(200)} color="hotpink" lineWidth={2} />
+    return <Line points={curve.getPoints(300)} color="#8fa8c8" lineWidth={1.5} dashed dashSize={1} gapSize={0.6} />
 }
+
+function BlueprintGrid({ night }) {
+    return (
+        <Grid
+            position={[0, -14, -90]}
+            args={[10, 10]}
+            infiniteGrid
+            cellSize={2}
+            cellThickness={0.6}
+            cellColor={night ? '#1d2a4a' : '#c9d7e8'}
+            sectionSize={10}
+            sectionThickness={1.2}
+            sectionColor={night ? '#34466e' : '#8fa8c8'}
+            fadeDistance={140}
+            fadeStrength={1.5}
+            fadeFrom={1}
+        />
+    )
+}
+
+function Progress({ current }) {
+    const reached = Math.min(current, CHAPTER_COUNT - 1)
+
+    return (
+        <nav className="progress">
+            <div className="progress-track">
+                <div className="progress-fill" style={{ width: `${(reached / (CHAPTER_COUNT - 1)) * 100}%` }} />
+            </div>
+            {titles.slice(0, CHAPTER_COUNT).map((item, index) => (
+                <div
+                    key={item.title}
+                    title={item.title}
+                    className={index <= reached ? 'progress-dot reached' : 'progress-dot'}
+                />
+            ))}
+        </nav>
+    )
+}
+
+
+
+
+function Sky({ night }) {
+    const gradient = night
+        ? ['#02040a', '#070b18', colors.night, '#1b2547']
+        : [colors.skyTop, '#cfe4ff', colors.horizon, colors.horizon]
+
+    return (
+        <mesh position={[0, 0, -90]}>
+            <sphereGeometry args={[400, 32, 16]} />
+            <meshBasicMaterial side={BackSide} fog={false}>
+                <GradientTexture stops={[0, 0.38, 0.5, 1]} colors={gradient} />
+            </meshBasicMaterial>
+        </mesh>
+    )
+}
+
 
 
 function Plane() {
@@ -165,9 +247,10 @@ function Plane() {
 
     return (
         <group ref={ref}>
-            <Model rotation={[0, Math.PI / 2, 0]} />
+            <Spaceship />
         </group>
     )
+
 }
 
 function CameraRig() {
@@ -188,6 +271,9 @@ function CameraRig() {
         cameraGoal.lerp(finaleCamera, finaleWeight)
 
         easing.damp3(state.camera.position, cameraGoal, 0.4, delta)
+        state.scene.fog.near = 40 + finaleWeight * 150
+        state.scene.fog.far = 160 + finaleWeight * 400
+
 
         const ahead = tangent.clone().multiplyScalar(5)
         const lookGoal = point.clone().add(ahead).lerp(demoLookAt, demoWeight)
@@ -204,14 +290,9 @@ function TitleWatcher({ current, onChange }) {
     const scroll = useScroll()
 
     useFrame(() => {
-        let title = null
-        if (scroll.offset > 0.97) {
-            title = FINALE
-        } else {
-            const nearest = Math.round(scroll.offset * (CHAPTER_COUNT - 1))
-            if (Math.abs(scroll.offset - nearest / (CHAPTER_COUNT - 1)) < 0.07) title = nearest
-        }
+        const title = scroll.offset > 0.97 ? FINALE : Math.round(scroll.offset * (CHAPTER_COUNT - 1))
         if (title !== current) onChange(title)
+
     })
 
     return null
@@ -254,9 +335,13 @@ export default function Presentation() {
     return (
         <>
             <Canvas camera={{ position: [8, 4, 10] }}>
-                <color attach="background" args={[night ? '#0b1020' : 'white']} />
-                <ambientLight intensity={night ? 0.15 : 1} />
-                <directionalLight position={[3, 3, 3]} intensity={night ? 0.1 : 1} />
+                <Sky night={night} />
+                <fog attach="fog" args={[night ? colors.night : colors.horizon, 40, 160]} />
+                <BlueprintGrid night={night} />
+
+                <hemisphereLight args={['#dceeff', '#ffe8cc', night ? 0.15 : 1.4]} />
+                <directionalLight position={[10, 20, 5]} color="#fff1dc" intensity={night ? 0.1 : 1.5} />
+
                 <FlightPath />
 
                 <ScrollControls pages={7} damping={0.2}>
@@ -281,7 +366,7 @@ export default function Presentation() {
                     <Chapter index={4}>
                         <ResearchApproach />
                     </Chapter>
-                    <Chapter index={5} titleX={-12} titleY={-1} titleColor={night ? 'white' : '#111'}>
+                    <Chapter index={5} titleX={-12} titleY={-1} titleColor={night ? 'white' : '#111' } fade={false}>
                         <Hangar crates={crates} night={night} active={demoActive} />
                     </Chapter>
                     <Chapter index={6}>
@@ -292,10 +377,13 @@ export default function Presentation() {
                 <EffectComposer>
                     {night && <Bloom luminanceThreshold={1} intensity={1.5} mipmapBlur />}
                     <Noise opacity={0.06} />
-                    <Vignette offset={0.3} darkness={0.5} />
+                    <Vignette offset={0.4} darkness={0.25} />
+
                 </EffectComposer>
 
             </Canvas>
+
+            <Progress current={currentTitle} />
 
             <Leva hidden={currentTitle !== 2} titleBar={{ position: { x: 0, y: 140 } }} />
 

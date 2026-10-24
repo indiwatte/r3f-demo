@@ -1,4 +1,6 @@
 import { Float, Text } from '@react-three/drei'
+import { colors } from './theme'
+
 
 
 const vanillaCode = `
@@ -93,23 +95,24 @@ const alternatives = [
 export function Card({ x, y, card, color }) {
     return (
         <group position={[x, y, 0]}>
-            <mesh position={[5.3, -2.2, -0.05]}>
-                <planeGeometry args={[11, 5.4]} />
-                <meshBasicMaterial color="#f2f2f2" />
+            <mesh position={[7, -2.9, -0.05]}>
+                <planeGeometry args={[14.5, 7]} />
+                <meshBasicMaterial color="white" transparent opacity={0.75} />
             </mesh>
-            <mesh position={[-0.1, -2.2, -0.04]}>
-                <planeGeometry args={[0.2, 5.4]} />
+            <mesh position={[-0.15, -2.9, -0.04]}>
+                <planeGeometry args={[0.25, 7]} />
                 <meshBasicMaterial color={color} />
             </mesh>
-            <Text position={[0.4, 0, 0]} fontSize={0.7} anchorX="left" anchorY="top" color="black">
+            <Text position={[0.5, 0, 0]} fontSize={1} anchorX="left" anchorY="top" color={colors.ink}>
                 {card.title}
             </Text>
-            <Text position={[0.4, -1, 0]} fontSize={0.45} anchorX="left" anchorY="top" color={color}>
+            <Text position={[0.5, -1.25, 0]} fontSize={0.6} anchorX="left" anchorY="top" color={color}>
                 {card.tech}
             </Text>
-            <Text position={[0.4, -1.8, 0]} fontSize={0.38} lineHeight={1.4} anchorX="left" anchorY="top" color="#333">
+            <Text position={[0.5, -2.2, 0]} fontSize={0.6} lineHeight={1.45} anchorX="left" anchorY="top" color={colors.muted}>
                 {card.points.map((point) => `• ${point}`).join('\n')}
             </Text>
+
         </group>
     )
 }
@@ -122,7 +125,7 @@ function Island({ x, name, note, color }) {
                 <cylinderGeometry args={[1.4, 0.8, 0.6, 6]} />
                 <meshStandardMaterial color={color} />
             </mesh>
-            <Text position={[0, 1, 0]} fontSize={0.5} anchorY="bottom" color="black">
+            <Text position={[0, 1, 0]} fontSize={0.6} anchorY="bottom" color="black">
                 {name}
             </Text>
             <Text position={[0, -0.8, 0]} fontSize={0.3} anchorY="top" color="#555">
@@ -135,12 +138,13 @@ function Island({ x, name, note, color }) {
 export default function Comparison() {
     return (
         <group>
-            <Card x={-15} y={1} card={atmosOriginal} color="#049ef4" />
-            <Card x={17} y={1} card={atmosRebuild} color="#e91e63" />
-            <Card x={17} y={-5.5} card={thisPresentation} color="#e91e63" />
+            <Card x={-17.5} y={1} card={atmosOriginal} color={colors.blue} />
+            <Card x={16} y={1} card={atmosRebuild} color={colors.accent} />
+            <Card x={16} y={-6.6} card={thisPresentation} color={colors.accent} />
+
 
             {alternatives.map((alt, index) => (
-                <Island key={alt.name} x={index * 3.5} name={alt.name} note={alt.note} color={alt.color} />
+                <Island key={alt.name} x={-1 + index * 4} name={alt.name} note={alt.note} color={alt.color} />
             ))}
         </group>
     )

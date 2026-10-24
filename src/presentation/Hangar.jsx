@@ -1,6 +1,9 @@
 import { Physics, RigidBody } from '@react-three/rapier'
-import { Model } from '../Model'
+import { Spaceship } from '../Spaceship'
+
 import { useRef} from 'react'
+import { colors } from './theme'
+
 
 
 
@@ -55,7 +58,8 @@ export default function Hangar({ crates, night, active }) {
             </RigidBody>
 
             <RigidBody type="fixed" colliders="hull">
-                <Model position={[-12, -7.3, 0]} rotation={[0, Math.PI / 2, 0]} />
+                <Spaceship position={[-12, -6.75, 0]} />
+
             </RigidBody>
 
             <Lamp position={[-22, -8.75, -5]} night={night} />

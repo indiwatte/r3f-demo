@@ -2,6 +2,8 @@ import { useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Text } from '@react-three/drei'
 import { useControls } from 'leva'
+import { colors } from './theme'
+
 
 function Spinner() {
     const ref = useRef()
@@ -66,7 +68,7 @@ function Feature({ x, label, children }) {
     return (
         <group position={[x, 0, 0]}>
             {children}
-            <Text position={[0, -1.8, 0]} fontSize={0.4} color="#222">
+            <Text position={[0, -1.9, 0]} fontSize={0.6} color={colors.ink}>
                 {label}
             </Text>
         </group>
@@ -76,16 +78,16 @@ function Feature({ x, label, children }) {
 export default function CoreFeatures() {
     return (
         <group>
-            <Feature x={-6} label="useFrame">
+            <Feature x={-7.5} label="useFrame">
                 <Spinner />
             </Feature>
-            <Feature x={-2} label="events">
+            <Feature x={-2.5} label="events">
                 <Clickable />
             </Feature>
-            <Feature x={2} label="leva">
+            <Feature x={2.5} label="leva">
                 <Tweakable />
             </Feature>
-            <Feature x={6} label=".map() × 20">
+            <Feature x={7.5} label=".map() × 20">
                 <Clones />
             </Feature>
         </group>

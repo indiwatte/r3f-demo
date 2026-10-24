@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll, Text, Line } from '@react-three/drei'
+import { colors } from './theme'
+
 
 const steps = [
     { title: 'Explore', note: 'what can R3F do?' },
@@ -12,10 +14,10 @@ const steps = [
 ]
 
 const SPACING = 5.5
-const START_X = -7 - ((steps.length - 1) * SPACING) / 2
+const START_X = -7.5 - ((steps.length - 1) * SPACING) / 2
 
 function Station({ x, number, title, note, reached }) {
-    const color = reached ? '#e91e63' : '#c4c4c4'
+    const color = reached ? colors.accent : '#c9d3df'
 
     return (
         <group position={[x, 0, 0]}>
@@ -26,10 +28,10 @@ function Station({ x, number, title, note, reached }) {
             <Text position={[0, 0, 0.2]} fontSize={0.7} color="white">
                 {number}
             </Text>
-            <Text position={[0, -1.3, 0]} fontSize={0.5} color="#111" anchorY="top">
+            <Text position={[0, -1.3, 0]} fontSize={0.65} color={colors.ink} anchorY="top">
                 {title}
             </Text>
-            <Text position={[0, -2, 0]} fontSize={0.3} maxWidth={5} textAlign="center" color="#666" anchorY="top">
+            <Text position={[0, -2.2, 0]} fontSize={0.42} maxWidth={5.2} textAlign="center" color={colors.muted} anchorY="top">
                 {note}
             </Text>
         </group>

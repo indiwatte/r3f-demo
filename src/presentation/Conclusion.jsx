@@ -1,5 +1,7 @@
 import { Card } from './Comparison'
 import { Float, Text } from '@react-three/drei'
+import { colors } from './theme'
+
 
 
 const useWhen = {
@@ -39,15 +41,16 @@ function Reference({ x, y, name, url }) {
     return (
         <Float position={[x, y, 0]} speed={1.5} floatIntensity={1}>
             <mesh position={[0, 0, -0.05]}>
-                <planeGeometry args={[8, 2]} />
-                <meshBasicMaterial color="#f2f2f2" />
+                <planeGeometry args={[9.4, 2.4]} />
+                <meshBasicMaterial color="white" transparent opacity={0.75} />
             </mesh>
-            <Text position={[0, 0.3, 0]} fontSize={0.5} color="black">
+            <Text position={[0, 0.35, 0]} fontSize={0.6} color={colors.ink}>
                 {name}
             </Text>
-            <Text position={[0, -0.45, 0]} fontSize={0.3} color="#666">
+            <Text position={[0, -0.5, 0]} fontSize={0.38} color={colors.muted}>
                 {url}
             </Text>
+
         </Float>
     )
 }
@@ -56,13 +59,14 @@ function Reference({ x, y, name, url }) {
 export default function Conclusion() {
     return (
         <group>
-            <Card x={-29} y={1} card={useWhen} color="#e91e63" />
-            <Card x={3} y={1} card={notWhen} color="#888888" />
+            <Card x={-30.5} y={1} card={useWhen} color={colors.accent} />
+            <Card x={2} y={1} card={notWhen} color={colors.muted} />
+
             {references.map((ref, index) => (
                 <Reference
                     key={ref.name}
-                    x={-20.5 + (index % 4) * 9}
-                    y={index < 4 ? 7.5 : 4.5}
+                    x={-22 + (index % 4) * 10}
+                    y={index < 4 ? 7 : 4.2}
                     name={ref.name}
                     url={ref.url}
                 />
