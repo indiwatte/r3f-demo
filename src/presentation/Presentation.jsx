@@ -11,6 +11,7 @@ import CoreFeatures from './CoreFeatures'
 import Comparison from './Comparison'
 import Conclusion from './Conclusion'
 import Hangar from './Hangar'
+import ResearchApproach from './ResearchApproach'
 import { useRef, useState } from 'react'
 import { EffectComposer, Bloom, Noise, Vignette } from '@react-three/postprocessing'
 import { Leva } from 'leva'
@@ -102,7 +103,7 @@ function Chapter({ index, titleX, titleY = 9, titleColor = '#111', children }) {
     const side = index % 2 === 0 ? 1 : -1
 
     useFrame(() => {
-        ref.current.visible = Math.abs(scroll.offset - t) < 0.12 || scroll.offset > 0.97
+        ref.current.visible = Math.abs(scroll.offset - t) < 0.09 || scroll.offset > 0.97
     })
     return (
         <group ref={ref} position={position} rotation={[0, facing, 0]}>
@@ -278,7 +279,7 @@ export default function Presentation() {
                         <Comparison />
                     </Chapter>
                     <Chapter index={4}>
-                        <Placeholder color="deepskyblue" />
+                        <ResearchApproach />
                     </Chapter>
                     <Chapter index={5} titleX={-12} titleY={-1} titleColor={night ? 'white' : '#111'}>
                         <Hangar crates={crates} night={night} active={demoActive} />
