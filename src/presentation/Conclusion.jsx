@@ -34,6 +34,21 @@ const steps = [
         ],
     },
     {
+        label: 'Strengths & weaknesses',
+        points: [
+            'Everything is a component: camera, physics, glow, my model',
+            'Each library is a few lines: drei, leva, rapier',
+            'HTML and 3D share one state: my demo buttons',
+            'A huge ecosystem: pmndrs',
+        ],
+        tiles: [
+            { title: 'You need to know React', note: 'hooks, state and refs come first', color: colors.sun },
+            { title: 'Snippets are not standalone', note: 'imports, lights and components missing', color: colors.sun },
+            { title: 'gltfjsx: meaningless names', note: 'name your parts in Blender first', color: colors.sun },
+            { title: 'Libraries can break each other', note: 'R3F 9.8 broke drei scrolling: pin versions', color: colors.sun },
+        ],
+    },
+    {
         label: 'What I learned',
         points: [
             'R3F changes how much setup you write, not what you build',
@@ -79,7 +94,7 @@ export default function Conclusion() {
     const [step, setStep] = useState(0)
 
     useFrame(() => {
-        const current = Math.min(Math.floor(scroll.range(0.92, 0.055) * steps.length), steps.length - 1)
+        const current = Math.min(Math.floor(scroll.range(0.9, 0.075) * steps.length), steps.length - 1)
         if (current !== step) setStep(current)
     })
 

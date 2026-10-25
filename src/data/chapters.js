@@ -8,7 +8,7 @@ export const titles = [
 
     {
         title: 'Core features',
-        points: ['Components + props: reusable 3D building blocks', 'Hooks: useFrame, useThree, useGLTF', 'Events: onClick directly on 3D objects', 'State: React state drives the scene'],
+        points: ['Components + props: reusable 3D building blocks', 'Hooks: useFrame, useThree, useGLTF', 'Events: onClick directly on 3D objects', 'State: React state drives the scene', 'Every frame: useFrame + ref'],
         source: 'r3f.docs.pmnd.rs, leva',
     },
 

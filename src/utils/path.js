@@ -13,7 +13,7 @@ export const curve = new CatmullRomCurve3([
 export const CHAPTER_COUNT = 7
 export const FINALE = 7
 
-export const HOLD = [0.035, 0.035, 0.07, 0.06, 0.08, 0.05, 0.08]
+export const HOLD = [0.035, 0.035, 0.07, 0.06, 0.08, 0.05, 0.1]
 
 export function clamp01(value) {
     return Math.min(Math.max(value, 0), 1)
