@@ -38,13 +38,13 @@ const steps = [
         points: [
             'Three.js: you give orders, step by step',
             'React: you describe the result',
-            'React was made for exactly this: a web page also works with orders',
+            'A web page also works with orders, and React was made to hide them',
             'R3F does for Three.js what React does for the page',
         ],
         tiles: [
             { title: 'Three.js = giving orders', note: 'make a cube, add it, move it, remove it', color: colors.blue },
             { title: 'React = describing the result', note: '"there are 3 crates", React does the rest', color: colors.accent },
-            { title: 'React was built for this', note: 'react-dom gives the page its orders', color: colors.accent },
+            { title: 'React solved this for web pages', note: 'react-dom gives the page its orders', color: colors.accent },
             { title: 'R3F = the same idea for 3D', note: 'it gives Three.js its orders for you', color: colors.accent },
         ],
     },
@@ -58,8 +58,8 @@ const steps = [
         ],
         tiles: [
             { title: 'You need to know React', note: 'hooks, state and refs come first', color: colors.sun },
-            { title: 'Two layers to debug', note: 'is it a React problem or a Three.js one?', color: colors.sun },
-            { title: 'A little extra cost', note: 'React adds a small layer on top', color: colors.sun },
+            { title: 'Two layers to debug (my experience)', note: 'is it a React problem or a Three.js one?', color: colors.sun },
+            { title: 'Easy to make it slow', note: 'setState in useFrame = 60 re-renders a second', color: colors.sun },
             { title: 'Updates can break things', note: 'an R3F update stopped my scrolling', color: colors.sun },
         ],
     },
