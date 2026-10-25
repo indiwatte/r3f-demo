@@ -7,6 +7,8 @@ import { colors } from './theme'
 const single = { spots: [[0, -0.6, 0]], size: [11, 7.2] }
 const row = { spots: [[-3.7, 0.4, 0], [0, 0.4, 0], [3.7, 0.4, 0]], size: [3.4, 4.2] }
 const grid = { spots: [[-2.85, 2, 0], [2.85, 2, 0], [0, -2.1, 0]], size: [5.2, 2.7] }
+const pair = { spots: [[-2.85, 0.6, 0], [2.85, 0.6, 0]], size: [5.2, 4] }
+
 
 
 const steps = [
@@ -23,9 +25,14 @@ const steps = [
     },
     {
         title: 'Basics',
-        points: ['R3F docs: Canvas, hooks, events', 'How R3F works together with Three.js', 'Articles: CreativeDevJobs, ICS MEDIA'],
-        media: [],
-        layout: single,
+        points: ['R3F docs: components with state, events and a render loop', 'The ecosystem: drei, rapier, postprocessing, leva', 'CreativeDevJobs: R3F is a real job skill in product teams'],
+        media: [
+            { src: '/research/basics1.png', caption: 'R3F docs: the first component', why: 'Own state, reacts to clicks, runs every frame' },
+            { src: '/research/basics2.png', caption: 'R3F docs: the ecosystem', why: 'Physics, effects and helpers as React libraries' },
+            { src: '/research/basics3.png', caption: 'CreativeDevJobs: R3F developer', why: 'React skills + 3D: configurators, product pages' },
+        ],
+        layout: grid,
+
     },
     {
         title: 'Tutorials',
@@ -39,9 +46,13 @@ const steps = [
     },
     {
         title: 'Case study',
-        points: ['Atmos: Three.js + GSAP vs the R3F rebuild', "Read Wawa Sensei's real code on GitHub"],
-        media: [],
-        layout: single,
+        points: ['Atmos (by LEEROY): Three.js, Blender, GSAP', 'Path: a Catmull-Rom curve, the same class I use', 'Scroll: they wrote their own library, R3F has drei useScroll', "Read Wawa Sensei's real R3F code on GitHub"],
+        media: [
+            { src: '/research/casestudy1.png', caption: 'Awwwards: following a path', why: 'Catmull-Rom curve, the same Three.js class as mine' },
+            { src: '/research/casestudy2.png', caption: 'Awwwards: the tech stack', why: 'Three.js, Blender, GSAP + a custom scroll library' },
+        ],
+        layout: pair,
+
     },
     {
         title: 'Experiments',
