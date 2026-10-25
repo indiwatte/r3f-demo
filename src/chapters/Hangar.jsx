@@ -5,20 +5,28 @@ import { useRef } from 'react'
 
 
 
-function Crate({ position }) {
+const shapes = {
+    crate: { colliders: 'cuboid', color: '#c8873a', geometry: <boxGeometry /> },
+    ball: { colliders: 'ball', color: '#ff4f7b', geometry: <sphereGeometry args={[0.6, 32, 32]} /> },
+    barrel: { colliders: 'hull', color: '#3d7eff', geometry: <cylinderGeometry args={[0.5, 0.5, 1.2, 24]} /> },
+}
+
+function Crate({ id, shape, position, onKick }) {
     const body = useRef()
+    const { colliders, color, geometry } = shapes[shape]
 
     function kick(event) {
         event.stopPropagation()
         body.current.applyImpulse({ x: Math.random() * 4 - 2, y: 8, z: Math.random() * 4 - 2 }, true)
         body.current.applyTorqueImpulse({ x: Math.random() - 0.5, y: Math.random() - 0.5, z: Math.random() - 0.5 }, true)
+        onKick(id)
     }
 
     return (
-        <RigidBody ref={body} position={position}>
+        <RigidBody ref={body} position={position} colliders={colliders}>
             <mesh onClick={kick}>
-                <boxGeometry />
-                <meshStandardMaterial color="#c8873a" />
+                {geometry}
+                <meshStandardMaterial color={color} />
             </mesh>
         </RigidBody>
     )
@@ -44,7 +52,7 @@ function Lamp({ position, night }) {
 
 
 
-export default function Hangar({ crates, night, active }) {
+export default function Hangar({ crates, night, active, onKick }) {
     return (
         <Physics paused={!active}>
 
@@ -67,7 +75,7 @@ export default function Hangar({ crates, night, active }) {
 
 
             {crates.map((crate) => (
-                <Crate key={crate.id} position={[crate.x, 6, crate.z]} />
+                <Crate key={crate.id} id={crate.id} shape={crate.shape} position={[crate.x, 6, crate.z]} onKick={onKick} />
             ))}
 
         </Physics>

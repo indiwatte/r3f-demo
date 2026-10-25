@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { ScrollControls } from '@react-three/drei'
 import { EffectComposer, Bloom, Noise, Vignette } from '@react-three/postprocessing'
@@ -15,6 +15,7 @@ import Chapter from './components/Chapter'
 import Finale from './components/Finale'
 import { TitleWatcher, DemoWatcher } from './components/ScrollWatchers'
 import Progress from './ui/Progress'
+import DataPanel from './ui/DataPanel'
 
 import WhatIsR3F from './chapters/WhatIsR3F'
 import CoreFeatures from './chapters/CoreFeatures'
@@ -31,6 +32,9 @@ export default function Presentation() {
     const [night, setNight] = useState(false)
     const [demoActive, setDemoActive] = useState(false)
     const [currentTitle, setCurrentTitle] = useState(0)
+    const [shape, setShape] = useState('crate')
+    const [kicked, setKicked] = useState(null)
+    const nextId = useRef(1)
 
     function changeDemoActive(isActive) {
         setDemoActive(isActive)
@@ -38,12 +42,17 @@ export default function Presentation() {
     }
 
     function dropCrate() {
-        const crate = { id: Date.now(), x: -17 + Math.random() * 10, z: -3 + Math.random() * 6 }
+        const crate = { id: nextId.current++, shape, x: -17 + Math.random() * 10, z: -3 + Math.random() * 6 }
         setCrates([...crates, crate])
+    }
+
+    function undo() {
+        setCrates(crates.slice(0, -1))
     }
 
     function reset() {
         setCrates([])
+        nextId.current = 1
     }
 
     return (
@@ -79,7 +88,7 @@ export default function Presentation() {
                         <ResearchApproach />
                     </Chapter>
                     <Chapter index={5} titleX={-12} titleY={-1} titleColor={night ? 'white' : '#111'} fade={false}>
-                        <Hangar crates={crates} night={night} active={demoActive} />
+                        <Hangar crates={crates} night={night} active={demoActive} onKick={setKicked} />
                     </Chapter>
                     <Chapter index={6}>
                         <Conclusion />
@@ -100,12 +109,22 @@ export default function Presentation() {
             <Leva hidden={currentTitle !== 2} titleBar={{ position: { x: -190, y: 545 } }} />
 
             {demoActive && (
-                <div className="demo-ui">
-                    <button onClick={dropCrate}>Drop crate</button>
-                    <button onClick={reset}>Reset</button>
-                    <button onClick={() => setNight(!night)}>{night ? 'Day mode' : 'Night mode'}</button>
-                    <span>{crates.length} crates</span>
-                </div>
+                <>
+                    <DataPanel crates={crates} highlight={kicked} />
+                    <div className="demo-ui">
+                        <div className="shape-picker">
+                            {['crate', 'ball', 'barrel'].map((option) => (
+                                <button key={option} className={option === shape ? 'selected' : ''} onClick={() => setShape(option)}>
+                                    {option}
+                                </button>
+                            ))}
+                        </div>
+                        <button onClick={dropCrate}>Drop {shape}</button>
+                        <button onClick={undo} disabled={crates.length === 0}>Undo</button>
+                        <button onClick={reset}>Reset</button>
+                        <button onClick={() => setNight(!night)}>{night ? 'Day mode' : 'Night mode'}</button>
+                    </div>
+                </>
             )}
         </>
     )

@@ -27,11 +27,79 @@ body,
   cursor: pointer;
 }
 
-.demo-ui span {
-  padding: 10px 12px;
-  border-radius: 8px;
+.demo-ui button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.shape-picker {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 10px;
+  background: rgba(34, 34, 34, 0.15);
+}
+
+.shape-picker button {
+  padding: 7px 12px;
+  background: transparent;
+  color: #222;
+  font-size: 14px;
+}
+
+.shape-picker button.selected {
   background: #222;
   color: white;
+}
+
+.data-panel {
+  position: fixed;
+  left: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 330px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: rgba(17, 21, 32, 0.88);
+  color: #e6ecf4;
+  font-family: system-ui, sans-serif;
+  pointer-events: none;
+}
+
+.data-panel-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #ff4f7b;
+}
+
+.data-panel pre {
+  margin: 0;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre;
+}
+
+.code-muted {
+  color: #8fa8c8;
+}
+
+.code-line {
+  display: inline;
+  transition: background 0.3s;
+}
+
+.code-line.highlight {
+  background: rgba(255, 79, 123, 0.45);
+}
+
+.data-panel-note {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: #8fa8c8;
 }
 
 .progress {
