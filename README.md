@@ -1,16 +1,69 @@
-# React + Vite
+# React Three Fiber — a scroll presentation
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A 10-minute presentation about **React Three Fiber (R3F)**, built in React Three Fiber itself. You fly a spaceship along a curved path past 7 chapters, inspired by the Awwwards website [Atmos](https://atmos.leeroy.ca/).
 
-Currently, two official plugins are available:
+[your name] · Capita selecta · October 2026
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## How to run it
 
-## React Compiler
+You need [Node.js](https://nodejs.org/) 18 or newer.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```sh
+npm install
+npm run dev
+```
 
-## Expanding the Oxlint configuration
+Open the link that appears in the terminal (usually http://localhost:5173) and **scroll** to move through the presentation.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## What's in it
+
+| # | Chapter | What you see |
+| --- | --- | --- |
+| 0 | Intro | Title and the spaceship |
+| 1 | What is R3F? | Code types itself out while a cube builds itself |
+| 2 | Core features | Components, hooks, events, state, and the two ways to change a scene |
+| 3 | Comparison | Atmos built twice (Three.js vs R3F), one effect in both, and alternatives |
+| 4 | My research | My 7 research steps, with screenshots and recordings |
+| 5 | The demo | A hangar with physics, controlled by React state |
+| 6 | Conclusion | When to use R3F, strengths and weaknesses, what I learned, sources |
+
+**Demo controls (chapter 5):** choose a shape (crate, ball, barrel), **Drop**, **Undo**, **Reset** and **Night mode**. Click an object to kick it. The panel on the left shows the React state live: every line in the list is one object in 3D.
+
+## Project structure
+
+```
+src/
+  main.jsx           starts the app
+  Presentation.jsx   puts everything together (state, scene, buttons)
+  chapters/          one file per chapter
+  components/        reusable 3D pieces (Sky, Plane, CameraRig, Page, Media, …)
+  ui/                HTML on top of the 3D (progress bar, data panel)
+  data/              all chapter texts
+  utils/             path maths and colors
+  experiments/       my 5 library experiments
+public/              3D models, videos and screenshots
+```
+
+## The experiments
+
+During my research I tried the 5 most-used R3F libraries: drei, leva, rapier, postprocessing and gltfjsx. To view one, change the import in `src/main.jsx`, for example:
+
+```js
+import App from './experiments/RapierTest.jsx'
+```
+
+## Built with
+
+React, React Three Fiber, drei, rapier (physics), postprocessing, leva, gltfjsx, maath and Vite.
+
+## Important: pinned versions
+
+`@react-three/fiber` is pinned to **9.7.0** and React to **19.2.9**. Version 9.8 of R3F breaks the scrolling of drei's `ScrollControls` (no error, the page just stops reacting to scroll). Please don't update these packages.
+
+## Credits
+
+- **Spaceship model:** "Spaceship" by [Quaternius](https://quaternius.com), Public Domain (CC0)
+- **Inspiration:** Atmos by LEEROY ([Awwwards case study](https://www.awwwards.com/case-study-atmos.html)) and Wawa Sensei's R3F rebuild ([wawasensei.dev](https://wawasensei.dev))
+- **Fonts:** Unbounded, Inter and JetBrains Mono (all free, via Fontsource)
+
+The full list of sources is in the PDF of the presentation.
