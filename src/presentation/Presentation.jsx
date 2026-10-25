@@ -65,14 +65,20 @@ const titles = [
     },
 
     { title: 'The demo' },
-    { title: 'Conclusion' },
+    {
+        title: 'Conclusion',
+        points: [],
+        source: 'my research, see the references',
+    },
+
     { title: 'Thank you!', subtitle: 'Questions?' },
 ]
 
 const CHAPTER_COUNT = 7
 const FINALE = 7
 
-const HOLD = [0.035, 0.035, 0.07, 0.06, 0.08, 0.05, 0.035]
+const HOLD = [0.035, 0.035, 0.07, 0.06, 0.08, 0.05, 0.08]
+
 
 
 
@@ -186,7 +192,8 @@ function Chapter({ index, titleX, titleY = 9, titleColor = '#111', fade = true, 
 
 
 
-        const opacity = scroll.offset > 0.97 ? 1 : Math.min(fadeIn, fadeOut)
+        const opacity = scroll.offset > 0.975 ? 1 : Math.min(fadeIn, fadeOut)
+
 
         ref.current.visible = fade ? opacity > 0 : opacity >= 1
 
@@ -230,7 +237,8 @@ function Finale() {
     const { title, subtitle } = titles[FINALE]
 
     useFrame(() => {
-        ref.current.visible = scroll.offset > 0.97
+        ref.current.visible = scroll.offset > 0.975
+
     })
 
     return (
@@ -357,7 +365,8 @@ function CameraRig() {
 
 
         const demoWeight = scroll.curve(0.75, 0.16)
-        const finaleWeight = scroll.range(0.94, 0.06)
+        const finaleWeight = scroll.range(0.975, 0.025)
+
 
 
         const behind = tangent.clone().multiplyScalar(-12)
@@ -387,7 +396,8 @@ function TitleWatcher({ current, onChange }) {
     const scroll = useScroll()
 
     useFrame(() => {
-        const title = scroll.offset > 0.97 ? FINALE : Math.round(scroll.offset * (CHAPTER_COUNT - 1))
+        const title = scroll.offset > 0.975 ? FINALE : Math.round(scroll.offset * (CHAPTER_COUNT - 1))
+
         if (title !== current) onChange(title)
 
     })
