@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import { Text, useTexture, useVideoTexture } from '@react-three/drei'
-import { colors } from './theme'
+import { colors } from '../utils/theme'
 
 function fit(mediaWidth, mediaHeight, maxWidth, maxHeight) {
     const scale = Math.min(maxWidth / mediaWidth, maxHeight / mediaHeight)

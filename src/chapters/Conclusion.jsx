@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll, Text } from '@react-three/drei'
-import { colors } from './theme'
+import { colors } from '../utils/theme'
 
 const steps = [
     {
@@ -34,11 +34,41 @@ const steps = [
         ],
     },
     {
+        label: 'Why R3F exists',
+        points: [
+            'Three.js: you give orders, step by step',
+            'React: you describe the result',
+            'React was made for exactly this: a web page also works with orders',
+            'R3F does for Three.js what React does for the page',
+        ],
+        tiles: [
+            { title: 'Three.js = giving orders', note: 'make a cube, add it, move it, remove it', color: colors.blue },
+            { title: 'React = describing the result', note: '"there are 3 crates", React does the rest', color: colors.accent },
+            { title: 'React was built for this', note: 'react-dom gives the page its orders', color: colors.accent },
+            { title: 'R3F = the same idea for 3D', note: 'it gives Three.js its orders for you', color: colors.accent },
+        ],
+    },
+    {
+        label: 'Strengths & weaknesses',
+        points: [
+            'Less code: build with blocks (components)',
+            'Cleans up memory by itself',
+            'Click and hover events built in',
+            'The biggest set of tools around Three.js',
+        ],
+        tiles: [
+            { title: 'You need to know React', note: 'hooks, state and refs come first', color: colors.sun },
+            { title: 'Two layers to debug', note: 'is it a React problem or a Three.js one?', color: colors.sun },
+            { title: 'A little extra cost', note: 'React adds a small layer on top', color: colors.sun },
+            { title: 'Updates can break things', note: 'an R3F update stopped my scrolling', color: colors.sun },
+        ],
+    },
+    {
         label: 'What I learned',
         points: [
             'R3F changes how much setup you write, not what you build',
             'State for what is in the scene, refs for what moves',
-            'Libraries depend on each other: pin your versions',
+            'Lock the versions that work together',
         ],
         references: [
             'R3F docs: r3f.docs.pmnd.rs',
@@ -49,6 +79,8 @@ const steps = [
             'Three.js Journey: threejs-journey.com',
             'CreativeDevJobs: R3F vs Three.js',
             'ICS MEDIA: R3F introduction',
+            'three.js forum: pros and cons of R3F',
+            'Spaceship model: Quaternius (CC0)',
         ],
     },
 ]
@@ -79,7 +111,7 @@ export default function Conclusion() {
     const [step, setStep] = useState(0)
 
     useFrame(() => {
-        const current = Math.min(Math.floor(scroll.range(0.92, 0.055) * steps.length), steps.length - 1)
+        const current = Math.min(Math.floor(scroll.range(0.885, 0.09) * steps.length), steps.length - 1)
         if (current !== step) setStep(current)
     })
 

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll, Text } from '@react-three/drei'
 import monoFont from '@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff'
-import { colors } from './theme'
+import { colors } from '../utils/theme'
 
 
 const codeLines = [

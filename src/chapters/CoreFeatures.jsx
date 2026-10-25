@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { useScroll, Text } from '@react-three/drei'
 import { useControls } from 'leva'
 import monoFont from '@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff'
-import { colors } from './theme'
+import { colors } from '../utils/theme'
 
 function Spinner() {
     const ref = useRef()
@@ -64,6 +64,25 @@ function Clones() {
     })
 }
 
+function TwoWays() {
+    return (
+        <group>
+            <group position={[-2.6, 0.3, 0]}>
+                <Clickable />
+                <Text position={[0, -1.9, 0]} fontSize={0.36} color={colors.ink}>
+                    A. state (click me)
+                </Text>
+            </group>
+            <group position={[2.6, 0.3, 0]}>
+                <Spinner />
+                <Text position={[0, -1.9, 0]} fontSize={0.36} color={colors.ink}>
+                    B. useFrame + ref
+                </Text>
+            </group>
+        </group>
+    )
+}
+
 const steps = [
     {
         label: 'Components + props',
@@ -106,6 +125,21 @@ const { nodes } = useGLTF('/spaceship.glb')`,
 // shared between components:
 // a global store with zustand`,
         visual: <Tweakable />,
+    },
+    {
+        label: 'Two ways to change the scene',
+        code: `// A. sometimes: React state, re-renders
+const [crates, setCrates] = useState([])
+setCrates([...crates, crate])
+
+// B. every frame: useFrame + ref, no re-render
+useFrame(() => {
+  ref.current.position.copy(point)
+})
+
+// pitfall: setState inside useFrame
+// = 60 re-renders per second`,
+        visual: <TwoWays />,
     },
 ]
 

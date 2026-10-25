@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll, Text } from '@react-three/drei'
-import Media from './Media'
-import { colors } from './theme'
+import Media from '../components/Media'
+import { colors } from '../utils/theme'
 
 const single = { spots: [[0, -0.6, 0]], size: [11, 7.2] }
 const row = { spots: [[-3.7, 0.4, 0], [0, 0.4, 0], [3.7, 0.4, 0]], size: [3.4, 4.2] }
@@ -66,9 +66,18 @@ const steps = [
     },
     {
         title: 'Demo',
-        points: ['Friday: a first rough skeleton', 'Then: stops, pages, sky and the demo', 'This presentation is the result'],
+        points: [' A first rough skeleton', 'Then: stops, pages, sky and the demo'],
         media: [{ src: '/research/skeleton.mp4' }],
         layout: single,
+    },
+    {
+        title: 'Documentation',
+        points: ['structured named files to document my research','Planned my 3 weeks in Notion', 'Kept a list of every source I used', 'The plan changed sometimes'],
+        media: [
+            { src: '/research/notion-planning.png', caption: 'My planning in Notion', why: 'tasks per week, with a goal and status' },
+            { src: '/research/notion-sources.png', caption: 'My sources in Notion', why: 'every source with what I used it for' },
+        ],
+        layout: pair,
     },
 ]
 
@@ -77,7 +86,7 @@ export default function ResearchApproach() {
     const [step, setStep] = useState(0)
 
     useFrame(() => {
-        const current = Math.min(Math.floor(scroll.range(0.59, 0.15) * steps.length), steps.length - 1)
+        const current = Math.min(Math.floor(scroll.range(0.59, 0.155) * steps.length), steps.length - 1)
         if (current !== step) setStep(current)
     })
 

@@ -1,6 +1,6 @@
 import { Text } from '@react-three/drei'
 import titleFont from '@fontsource/unbounded/files/unbounded-latin-800-normal.woff'
-import { colors } from './theme'
+import { colors } from '../utils/theme'
 
 const WIDTH = 24
 const HEIGHT = 11
