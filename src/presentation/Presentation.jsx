@@ -1,14 +1,16 @@
 import { Canvas, useFrame } from '@react-three/fiber'
-import { ScrollControls, useScroll, Line, Text, Billboard, GradientTexture, Grid } from '@react-three/drei'
+import { ScrollControls, useScroll, Text, Billboard } from '@react-three/drei'
 
 
 import { configureTextBuilder } from 'troika-three-text'
 import bodyFont from '@fontsource/inter/files/inter-latin-400-normal.woff'
 import titleFont from '@fontsource/unbounded/files/unbounded-latin-800-normal.woff'
-import { Spaceship } from '../Spaceship'
 
-import { Vector3, BackSide } from 'three'
-import { easing } from 'maath'
+import Sky from '../components/Sky'
+import BlueprintGrid from '../components/BlueprintGrid'
+import FlightPath from '../components/FlightPath'
+import Plane from '../components/Plane'
+import CameraRig from '../components/CameraRig'
 import WhatIsR3F from './WhatIsR3F'
 import CoreFeatures from './CoreFeatures'
 import Comparison from './Comparison'
@@ -24,30 +26,13 @@ import { Leva } from 'leva'
 
 import { colors } from './theme'
 
-import { curve, CHAPTER_COUNT, FINALE, clamp01, flight, stopDistance, chapterPlacement, toWorld } from '../utils/path'
+import { CHAPTER_COUNT, FINALE, clamp01, stopDistance, chapterPlacement } from '../utils/path'
 import { titles } from '../data/chapters'
 
 
 
 
 configureTextBuilder({ defaultFontURL: bodyFont })
-
-
-
-
-const demoCamera = toWorld(5, [-12, 3, 16])
-const demoLookAt = toWorld(5, [-12, -7, 0])
-const finaleCamera = new Vector3(70, 110, 20)
-const finaleLookAt = new Vector3(0, 0, -90)
-
-const pageViews = titles.slice(0, CHAPTER_COUNT).map((item, index) => {
-    const pageX = index % 2 === 0 ? -7 : 7
-    return {
-        hasPage: Boolean(item.points),
-        camera: toWorld(index, [pageX, 6.5, 15]),
-        lookAt: toWorld(index, [pageX, 6.5, 0]),
-    }
-})
 
 
 
@@ -170,29 +155,6 @@ function Placeholder({ color }) {
 
 
 
-function FlightPath() {
-    return <Line points={curve.getPoints(300)} color="#8fa8c8" lineWidth={1.5} dashed dashSize={1} gapSize={0.6} />
-}
-
-function BlueprintGrid({ night }) {
-    return (
-        <Grid
-            position={[0, -14, -90]}
-            args={[10, 10]}
-            infiniteGrid
-            cellSize={2}
-            cellThickness={0.6}
-            cellColor={night ? '#1d2a4a' : '#c9d7e8'}
-            sectionSize={10}
-            sectionThickness={1.2}
-            sectionColor={night ? '#34466e' : '#8fa8c8'}
-            fadeDistance={140}
-            fadeStrength={1.5}
-            fadeFrom={1}
-        />
-    )
-}
-
 function Progress({ current }) {
     const reached = Math.min(current, CHAPTER_COUNT - 1)
 
@@ -215,93 +177,8 @@ function Progress({ current }) {
 
 
 
-function Sky({ night }) {
-    const gradient = night
-        ? ['#02040a', '#070b18', colors.night, '#1b2547']
-        : [colors.skyTop, '#cfe4ff', colors.horizon, colors.horizon]
-
-    return (
-        <mesh position={[0, 0, -90]}>
-            <sphereGeometry args={[400, 32, 16]} />
-            <meshBasicMaterial side={BackSide} fog={false}>
-                <GradientTexture stops={[0, 0.38, 0.5, 1]} colors={gradient} />
-            </meshBasicMaterial>
-        </mesh>
-    )
-}
 
 
-
-function Plane() {
-    const ref = useRef()
-    const bank = useRef()
-    const scroll = useScroll()
-
-    useFrame((state, delta) => {
-        const progress = flight(scroll.offset)
-        const point = curve.getPointAt(progress)
-        const tangent = curve.getTangentAt(progress)
-
-        ref.current.position.copy(point)
-        ref.current.lookAt(point.clone().add(tangent))
-
-        const ahead = curve.getTangentAt(Math.min(progress + 0.01, 1))
-        const turn = tangent.x * ahead.z - tangent.z * ahead.x
-        const targetBank = Math.max(-0.6, Math.min(0.6, turn * 3))
-        easing.damp(bank.current.rotation, 'z', targetBank, 0.3, delta)
-    })
-
-    return (
-        <group ref={ref}>
-            <group ref={bank}>
-                <Spaceship scale={0.6} />
-            </group>
-        </group>
-    )
-}
-
-
-function CameraRig() {
-    const scroll = useScroll()
-    const lookTarget = useRef(new Vector3())
-
-    useFrame((state, delta) => {
-        const progress = flight(scroll.offset)
-        const point = curve.getPointAt(progress)
-        const tangent = curve.getTangentAt(progress)
-
-        const nearest = Math.round(scroll.offset * (CHAPTER_COUNT - 1))
-        const view = pageViews[nearest]
-        const pageWeight = view.hasPage ? 1 - clamp01(Math.abs(stopDistance(scroll.offset, nearest)) / 0.04) : 0
-
-
-        const demoWeight = scroll.curve(0.75, 0.16)
-        const finaleWeight = scroll.range(0.975, 0.025)
-
-
-
-        const behind = tangent.clone().multiplyScalar(-12)
-        const above = new Vector3(0, 4, 0)
-        const cameraGoal = point.clone().add(behind).add(above).lerp(view.camera, pageWeight).lerp(demoCamera, demoWeight)
-
-        cameraGoal.lerp(finaleCamera, finaleWeight)
-
-        easing.damp3(state.camera.position, cameraGoal, 0.4, delta)
-        state.scene.fog.near = 40 + finaleWeight * 150
-        state.scene.fog.far = 160 + finaleWeight * 400
-
-
-        const ahead = tangent.clone().multiplyScalar(5)
-        const lookGoal = point.clone().add(ahead).lerp(view.lookAt, pageWeight).lerp(demoLookAt, demoWeight)
-
-        lookGoal.lerp(finaleLookAt, finaleWeight)
-        easing.damp3(lookTarget.current, lookGoal, 0.4, delta)
-
-        state.camera.lookAt(lookTarget.current)
-    })
-
-    return null
-}
 
 function TitleWatcher({ current, onChange }) {
     const scroll = useScroll()
