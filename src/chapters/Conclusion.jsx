@@ -34,17 +34,31 @@ const steps = [
         ],
     },
     {
+        label: 'Why R3F exists',
+        points: [
+            'Three.js: you give orders, step by step',
+            'React: you describe what the screen should look like',
+            'They think in opposite ways',
+            'R3F is the translator between them',
+        ],
+        tiles: [
+            { title: 'Three.js = giving orders', note: 'make a cube, add it, move it, remove it', color: colors.blue },
+            { title: 'React = describing the result', note: '"there are 3 crates", React does the rest', color: colors.accent },
+            { title: 'Combine them yourself?', note: "you'd end up rebuilding R3F", color: colors.muted },
+        ],
+    },
+    {
         label: 'Strengths & weaknesses',
         points: [
-            'Everything is a component: camera, physics, glow, my model',
-            'Each library is a few lines: drei, leva, rapier',
-            'HTML and 3D share one state: my demo buttons',
-            'A huge ecosystem: pmndrs',
+            'Less code: build with blocks (components)',
+            'Cleans up memory by itself',
+            'Click and hover events built in',
+            'The biggest set of tools around Three.js',
         ],
         tiles: [
             { title: 'You need to know React', note: 'hooks, state and refs come first', color: colors.sun },
-            { title: 'Snippets are not standalone', note: 'imports, lights and components missing', color: colors.sun },
-            { title: 'gltfjsx: meaningless names', note: 'name your parts in Blender first', color: colors.sun },
+            { title: 'Two layers to debug', note: 'is it a React problem or a Three.js one?', color: colors.sun },
+            { title: 'A little extra cost', note: 'React adds a small layer on top', color: colors.sun },
             { title: 'Updates can break things', note: 'an R3F update stopped my scrolling', color: colors.sun },
         ],
     },
@@ -64,6 +78,7 @@ const steps = [
             'Three.js Journey: threejs-journey.com',
             'CreativeDevJobs: R3F vs Three.js',
             'ICS MEDIA: R3F introduction',
+            'three.js forum: pros and cons of R3F',
             'Spaceship model: Quaternius (CC0)',
         ],
     },
@@ -95,7 +110,7 @@ export default function Conclusion() {
     const [step, setStep] = useState(0)
 
     useFrame(() => {
-        const current = Math.min(Math.floor(scroll.range(0.9, 0.075) * steps.length), steps.length - 1)
+        const current = Math.min(Math.floor(scroll.range(0.885, 0.09) * steps.length), steps.length - 1)
         if (current !== step) setStep(current)
     })
 
