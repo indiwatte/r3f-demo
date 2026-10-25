@@ -7,7 +7,7 @@ import bodyFont from '@fontsource/inter/files/inter-latin-400-normal.woff'
 import titleFont from '@fontsource/unbounded/files/unbounded-latin-800-normal.woff'
 import { Spaceship } from '../Spaceship'
 
-import { CatmullRomCurve3, Vector3, BackSide } from 'three'
+import { Vector3, BackSide } from 'three'
 import { easing } from 'maath'
 import WhatIsR3F from './WhatIsR3F'
 import CoreFeatures from './CoreFeatures'
@@ -24,18 +24,13 @@ import { Leva } from 'leva'
 
 import { colors } from './theme'
 
+import { curve, CHAPTER_COUNT, FINALE, clamp01, flight, stopDistance, chapterPlacement, toWorld } from '../utils/path'
+
+
 
 configureTextBuilder({ defaultFontURL: bodyFont })
 
-const curve = new CatmullRomCurve3([
-    new Vector3(0, 0, 0),
-    new Vector3(-10, 2, -30),
-    new Vector3(10, -2, -60),
-    new Vector3(-8, 3, -90),
-    new Vector3(8, 0, -120),
-    new Vector3(-5, 2, -150),
-    new Vector3(0, 0, -180),
-])
+
 
 const titles = [
     { title: 'React Three Fiber', subtitle: 'Scroll to begin' },
@@ -73,57 +68,6 @@ const titles = [
 
     { title: 'Thank you!', subtitle: 'Questions?' },
 ]
-
-const CHAPTER_COUNT = 7
-const FINALE = 7
-
-const HOLD = [0.035, 0.035, 0.07, 0.06, 0.08, 0.05, 0.08]
-
-
-
-
-function flight(offset) {
-    for (let i = 0; i < CHAPTER_COUNT; i++) {
-        const t = i / (CHAPTER_COUNT - 1)
-        if (Math.abs(offset - t) <= HOLD[i]) return t
-
-        const next = (i + 1) / (CHAPTER_COUNT - 1)
-        const leave = t + HOLD[i]
-        const arrive = next - HOLD[i + 1]
-        if (offset > leave && offset < arrive) {
-            const s = (offset - leave) / (arrive - leave)
-            return t + s * s * (3 - 2 * s) * (next - t)
-        }
-    }
-    return 1
-}
-
-function stopDistance(offset, index) {
-    const distance = offset - index / (CHAPTER_COUNT - 1)
-    if (distance > 0) return Math.max(distance - HOLD[index], 0)
-    return Math.min(distance + HOLD[index], 0)
-}
-
-
-function chapterPlacement(index) {
-    const t = index / (CHAPTER_COUNT - 1)
-    const point = curve.getPointAt(t)
-    const tangent = curve.getTangentAt(t)
-
-    const side = index % 2 === 0 ? 1 : -1
-    const ahead = tangent.clone().multiplyScalar(15)
-    const sideways = tangent.clone().cross(new Vector3(0, 1, 0)).multiplyScalar(7 * side)
-    const position = point.clone().add(ahead).add(sideways).add(new Vector3(0, 2, 0))
-
-    const facing = Math.atan2(-tangent.x, -tangent.z)
-
-    return { t, position, facing }
-}
-
-function toWorld(index, local) {
-    const { position, facing } = chapterPlacement(index)
-    return new Vector3(...local).applyAxisAngle(new Vector3(0, 1, 0), facing).add(position)
-}
 
 const demoCamera = toWorld(5, [-12, 3, 16])
 const demoLookAt = toWorld(5, [-12, -7, 0])
@@ -167,11 +111,6 @@ function ChapterTitle({ index, x, y, color }) {
         </group>
     )
 }
-
-function clamp01(value) {
-    return Math.min(Math.max(value, 0), 1)
-}
-
 
 function Chapter({ index, titleX, titleY = 9, titleColor = '#111', fade = true, children }) {
     const ref = useRef()
