@@ -14,6 +14,8 @@ import CoreFeatures from './CoreFeatures'
 import Comparison from './Comparison'
 import Conclusion from './Conclusion'
 import Hangar from './Hangar'
+import Page from './Page'
+
 import ResearchApproach from './ResearchApproach'
 import { useRef, useState } from 'react'
 import { EffectComposer, Bloom, Noise, Vignette } from '@react-three/postprocessing'
@@ -37,8 +39,18 @@ const curve = new CatmullRomCurve3([
 
 const titles = [
     { title: 'React Three Fiber', subtitle: 'Scroll to begin' },
-    { title: 'What is R3F?' },
-    { title: 'Core features' },
+    {
+        title: 'What is R3F?',
+        points: ['A React renderer for Three.js', 'Write 3D scenes as JSX components', 'It is Three.js underneath: every tag becomes a Three.js object'],
+        source: 'r3f.docs.pmnd.rs',
+    },
+
+    {
+        title: 'Core features',
+        points: ['Components + props: reusable 3D building blocks', 'Hooks: useFrame, useThree, useGLTF', 'Events: onClick directly on 3D objects', 'State: React state drives the scene'],
+        source: 'r3f.docs.pmnd.rs, leva',
+    },
+
     { title: 'Comparison' },
     { title: 'Research approach' },
     { title: 'The demo' },
@@ -48,6 +60,31 @@ const titles = [
 
 const CHAPTER_COUNT = 7
 const FINALE = 7
+
+const HOLD = [0.035, 0.035, 0.07, 0.035, 0.035, 0.05, 0.035]
+
+function flight(offset) {
+    for (let i = 0; i < CHAPTER_COUNT; i++) {
+        const t = i / (CHAPTER_COUNT - 1)
+        if (Math.abs(offset - t) <= HOLD[i]) return t
+
+        const next = (i + 1) / (CHAPTER_COUNT - 1)
+        const leave = t + HOLD[i]
+        const arrive = next - HOLD[i + 1]
+        if (offset > leave && offset < arrive) {
+            const s = (offset - leave) / (arrive - leave)
+            return t + s * s * (3 - 2 * s) * (next - t)
+        }
+    }
+    return 1
+}
+
+function stopDistance(offset, index) {
+    const distance = offset - index / (CHAPTER_COUNT - 1)
+    if (distance > 0) return Math.max(distance - HOLD[index], 0)
+    return Math.min(distance + HOLD[index], 0)
+}
+
 
 function chapterPlacement(index) {
     const t = index / (CHAPTER_COUNT - 1)
@@ -74,17 +111,26 @@ const demoLookAt = toWorld(5, [-12, -7, 0])
 const finaleCamera = new Vector3(70, 110, 20)
 const finaleLookAt = new Vector3(0, 0, -90)
 
+const pageViews = titles.slice(0, CHAPTER_COUNT).map((item, index) => {
+    const pageX = index % 2 === 0 ? -7 : 7
+    return {
+        hasPage: Boolean(item.points),
+        camera: toWorld(index, [pageX, 6.5, 15]),
+        lookAt: toWorld(index, [pageX, 6.5, 0]),
+    }
+})
+
+
 
 
 function ChapterTitle({ index, x, y, color }) {
     const ref = useRef()
     const scroll = useScroll()
-    const t = index / (CHAPTER_COUNT - 1)
     const { title, subtitle } = titles[index]
 
     useFrame(() => {
-        const distance = Math.abs(scroll.offset - t)
-        const appear = 1 - Math.min(Math.max((distance - 0.02) / 0.06, 0), 1)
+        const appear = 1 - clamp01(Math.abs(stopDistance(scroll.offset, index)) / 0.045)
+
         ref.current.position.y = y - (1 - appear) * 2
         ref.current.children.forEach((text) => (text.fillOpacity = appear))
     })
@@ -111,16 +157,30 @@ function clamp01(value) {
 function Chapter({ index, titleX, titleY = 9, titleColor = '#111', fade = true, children }) {
     const ref = useRef()
     const scroll = useScroll()
-    const { t, position, facing } = chapterPlacement(index)
+    const hinge = useRef()
+
+    const { position, facing } = chapterPlacement(index)
+
     const side = index % 2 === 0 ? 1 : -1
+    const hasPage = Boolean(titles[index].points)
+
 
     useFrame(() => {
-        const distance = scroll.offset - t
-        const fadeIn = clamp01((distance + 0.12) / 0.05)
-        const fadeOut = clamp01((0.07 - distance) / 0.03)
+
+        const distance = stopDistance(scroll.offset, index)
+        const fadeIn = clamp01((distance + 0.085) / 0.05)
+        const fadeOut = clamp01((0.015 - distance) / 0.015)
+
+
+
         const opacity = scroll.offset > 0.97 ? 1 : Math.min(fadeIn, fadeOut)
 
         ref.current.visible = opacity > 0
+        if (hasPage) {
+            const open = distance < 0 ? clamp01(1 + distance / 0.05) : 1
+            hinge.current.rotation.x = -(1 - open) * Math.PI * 0.45
+        }
+
         if (!fade) return
 
         ref.current.traverse((object) => {
@@ -132,8 +192,20 @@ function Chapter({ index, titleX, titleY = 9, titleColor = '#111', fade = true, 
     })
     return (
         <group ref={ref} position={position} rotation={[0, facing, 0]}>
-            <ChapterTitle index={index} x={titleX ?? -7 * side} y={titleY} color={titleColor} />
-            {children}
+            {hasPage ? (
+                <group ref={hinge} position={[-7 * side, 1, 0]}>
+                    <Page number={index} {...titles[index]}>
+                        {children}
+                    </Page>
+                </group>
+            ) : (
+                <>
+                    <ChapterTitle index={index} x={titleX ?? -7 * side} y={titleY} color={titleColor} />
+                    {children}
+                </>
+            )}
+
+
         </group>
     )
 }
@@ -238,8 +310,10 @@ function Plane() {
     const scroll = useScroll()
 
     useFrame(() => {
-        const point = curve.getPointAt(scroll.offset)
-        const tangent = curve.getTangentAt(scroll.offset)
+        const progress = flight(scroll.offset)
+        const point = curve.getPointAt(progress)
+        const tangent = curve.getTangentAt(progress)
+
         ref.current.position.copy(point)
         ref.current.lookAt(point.clone().add(tangent))
 
@@ -247,7 +321,8 @@ function Plane() {
 
     return (
         <group ref={ref}>
-            <Spaceship />
+            <Spaceship scale={0.6} />
+
         </group>
     )
 
@@ -258,8 +333,14 @@ function CameraRig() {
     const lookTarget = useRef(new Vector3())
 
     useFrame((state, delta) => {
-        const point = curve.getPointAt(scroll.offset)
-        const tangent = curve.getTangentAt(scroll.offset)
+        const progress = flight(scroll.offset)
+        const point = curve.getPointAt(progress)
+        const tangent = curve.getTangentAt(progress)
+
+        const nearest = Math.round(scroll.offset * (CHAPTER_COUNT - 1))
+        const view = pageViews[nearest]
+        const pageWeight = view.hasPage ? 1 - clamp01(Math.abs(stopDistance(scroll.offset, nearest)) / 0.04) : 0
+
 
         const demoWeight = scroll.curve(0.75, 0.16)
         const finaleWeight = scroll.range(0.94, 0.06)
@@ -267,7 +348,8 @@ function CameraRig() {
 
         const behind = tangent.clone().multiplyScalar(-12)
         const above = new Vector3(0, 4, 0)
-        const cameraGoal = point.clone().add(behind).add(above).lerp(demoCamera, demoWeight)
+        const cameraGoal = point.clone().add(behind).add(above).lerp(view.camera, pageWeight).lerp(demoCamera, demoWeight)
+
         cameraGoal.lerp(finaleCamera, finaleWeight)
 
         easing.damp3(state.camera.position, cameraGoal, 0.4, delta)
@@ -276,7 +358,8 @@ function CameraRig() {
 
 
         const ahead = tangent.clone().multiplyScalar(5)
-        const lookGoal = point.clone().add(ahead).lerp(demoLookAt, demoWeight)
+        const lookGoal = point.clone().add(ahead).lerp(view.lookAt, pageWeight).lerp(demoLookAt, demoWeight)
+
         lookGoal.lerp(finaleLookAt, finaleWeight)
         easing.damp3(lookTarget.current, lookGoal, 0.4, delta)
 
@@ -344,7 +427,7 @@ export default function Presentation() {
 
                 <FlightPath />
 
-                <ScrollControls pages={7} damping={0.2}>
+                <ScrollControls pages={9} damping={0.2}>
                     <Plane />
                     <CameraRig />
                     <TitleWatcher current={currentTitle} onChange={setCurrentTitle} />

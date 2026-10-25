@@ -29,12 +29,14 @@ export default function WhatIsR3F() {
 
     return (
         <group>
-            <Text font={monoFont} position={[-20, 2, 0]} fontSize={0.7} lineHeight={1.3} color={colors.ink}>
+            <Text font={monoFont} position={[-5.4, 4.3, 0]} fontSize={0.4} lineHeight={1.35} anchorX="left" anchorY="top" color={colors.ink}>
+
                 {codeLines.slice(0, visibleLines).join('\n')}
             </Text>
             {hasGeometry && (
-                <mesh position={[1, 0, 0]}>
-                    <boxGeometry args={[2, 2, 2]} />
+                <mesh position={[0, -2, 0]} rotation={[0.4, 0.6, 0]}>
+                    <boxGeometry args={[2.4, 2.4, 2.4]} />
+
                     {hasMaterial ? <meshStandardMaterial color="orange" /> : <meshBasicMaterial color="gray" wireframe />}
                 </mesh>
             )}
