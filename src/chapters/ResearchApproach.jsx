@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll, Text } from '@react-three/drei'
-import Media from './Media'
-import { colors } from './theme'
+import Media from '../components/Media'
+import { colors } from '../utils/theme'
 
 const single = { spots: [[0, -0.6, 0]], size: [11, 7.2] }
 const row = { spots: [[-3.7, 0.4, 0], [0, 0.4, 0], [3.7, 0.4, 0]], size: [3.4, 4.2] }

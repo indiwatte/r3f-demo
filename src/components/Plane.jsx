@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll } from '@react-three/drei'
 import { easing } from 'maath'
-import { Spaceship } from '../Spaceship'
+import { Spaceship } from './Spaceship'
 import { curve, flight } from '../utils/path'
 
 export default function Plane() {

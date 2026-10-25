@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll, Text } from '@react-three/drei'
 import titleFont from '@fontsource/unbounded/files/unbounded-latin-800-normal.woff'
-import Page from '../presentation/Page'
+import Page from './Page'
 import { clamp01, stopDistance, chapterPlacement } from '../utils/path'
 import { titles } from '../data/chapters'
 

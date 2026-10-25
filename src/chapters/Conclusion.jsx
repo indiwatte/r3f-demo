@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll, Text } from '@react-three/drei'
-import { colors } from './theme'
+import { colors } from '../utils/theme'
 
 const steps = [
     {

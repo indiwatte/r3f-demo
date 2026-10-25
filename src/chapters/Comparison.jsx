@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useScroll, Float, Text } from '@react-three/drei'
-import { colors } from './theme'
+import { colors } from '../utils/theme'
 import monoFont from '@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff'
 
 
@@ -18,30 +18,6 @@ const alternatives = [
     { name: 'TresJS', note: 'R3F for Vue', color: colors.mint },
     { name: 'Spline', note: 'no-code design tool', color: colors.muted },
 ]
-
-export function Card({ x, y, card, color }) {
-    return (
-        <group position={[x, y, 0]}>
-            <mesh position={[7, -2.9, -0.05]}>
-                <planeGeometry args={[14.5, 7]} />
-                <meshBasicMaterial color="white" transparent opacity={0.75} />
-            </mesh>
-            <mesh position={[-0.15, -2.9, -0.04]}>
-                <planeGeometry args={[0.25, 7]} />
-                <meshBasicMaterial color={color} />
-            </mesh>
-            <Text position={[0.5, 0, 0]} fontSize={1} anchorX="left" anchorY="top" color={colors.ink}>
-                {card.title}
-            </Text>
-            <Text position={[0.5, -1.25, 0]} fontSize={0.6} anchorX="left" anchorY="top" color={color}>
-                {card.tech}
-            </Text>
-            <Text position={[0.5, -2.2, 0]} fontSize={0.6} lineHeight={1.45} anchorX="left" anchorY="top" color={colors.muted}>
-                {card.points.map((point) => `• ${point}`).join('\n')}
-            </Text>
-        </group>
-    )
-}
 
 function Tile({ y, title, tech, color }) {
     return (

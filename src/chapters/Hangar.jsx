@@ -1,8 +1,6 @@
 import { Physics, RigidBody } from '@react-three/rapier'
-import { Spaceship } from '../Spaceship'
-
-import { useRef} from 'react'
-import { colors } from './theme'
+import { Spaceship } from '../components/Spaceship'
+import { useRef } from 'react'
 
 
 

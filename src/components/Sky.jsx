@@ -1,6 +1,6 @@
 import { GradientTexture } from '@react-three/drei'
 import { BackSide } from 'three'
-import { colors } from '../presentation/theme'
+import { colors } from '../utils/theme'
 
 export default function Sky({ night }) {
     const gradient = night

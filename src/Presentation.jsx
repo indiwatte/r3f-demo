@@ -6,34 +6,25 @@ import { Leva } from 'leva'
 import { configureTextBuilder } from 'troika-three-text'
 import bodyFont from '@fontsource/inter/files/inter-latin-400-normal.woff'
 
-import Sky from '../components/Sky'
-import BlueprintGrid from '../components/BlueprintGrid'
-import FlightPath from '../components/FlightPath'
-import Plane from '../components/Plane'
-import CameraRig from '../components/CameraRig'
-import Chapter from '../components/Chapter'
-import Finale from '../components/Finale'
-import { TitleWatcher, DemoWatcher } from '../components/ScrollWatchers'
-import Progress from '../ui/Progress'
+import Sky from './components/Sky'
+import BlueprintGrid from './components/BlueprintGrid'
+import FlightPath from './components/FlightPath'
+import Plane from './components/Plane'
+import CameraRig from './components/CameraRig'
+import Chapter from './components/Chapter'
+import Finale from './components/Finale'
+import { TitleWatcher, DemoWatcher } from './components/ScrollWatchers'
+import Progress from './ui/Progress'
 
-import WhatIsR3F from './WhatIsR3F'
-import CoreFeatures from './CoreFeatures'
-import Comparison from './Comparison'
-import ResearchApproach from './ResearchApproach'
-import Hangar from './Hangar'
-import Conclusion from './Conclusion'
-import { colors } from './theme'
+import WhatIsR3F from './chapters/WhatIsR3F'
+import CoreFeatures from './chapters/CoreFeatures'
+import Comparison from './chapters/Comparison'
+import ResearchApproach from './chapters/ResearchApproach'
+import Hangar from './chapters/Hangar'
+import Conclusion from './chapters/Conclusion'
+import { colors } from './utils/theme'
 
 configureTextBuilder({ defaultFontURL: bodyFont })
-
-function Placeholder({ color }) {
-    return (
-        <mesh>
-            <boxGeometry args={[2, 2, 2]} />
-            <meshStandardMaterial color={color} />
-        </mesh>
-    )
-}
 
 export default function Presentation() {
     const [crates, setCrates] = useState([])
@@ -74,9 +65,7 @@ export default function Presentation() {
                     <Finale />
                     <DemoWatcher active={demoActive} onChange={changeDemoActive} />
 
-                    <Chapter index={0}>
-                        <Placeholder color="orange" />
-                    </Chapter>
+                    <Chapter index={0} />
                     <Chapter index={1}>
                         <WhatIsR3F />
                     </Chapter>
@@ -89,7 +78,7 @@ export default function Presentation() {
                     <Chapter index={4}>
                         <ResearchApproach />
                     </Chapter>
-                    <Chapter index={5} titleX={-12} titleY={-1} titleColor={night ? 'white' : '#111' } fade={false}>
+                    <Chapter index={5} titleX={-12} titleY={-1} titleColor={night ? 'white' : '#111'} fade={false}>
                         <Hangar crates={crates} night={night} active={demoActive} />
                     </Chapter>
                     <Chapter index={6}>
