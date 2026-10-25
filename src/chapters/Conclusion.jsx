@@ -37,14 +37,15 @@ const steps = [
         label: 'Why R3F exists',
         points: [
             'Three.js: you give orders, step by step',
-            'React: you describe what the screen should look like',
-            'They think in opposite ways',
-            'R3F is the translator between them',
+            'React: you describe the result',
+            'React was made for exactly this: a web page also works with orders',
+            'R3F does for Three.js what React does for the page',
         ],
         tiles: [
             { title: 'Three.js = giving orders', note: 'make a cube, add it, move it, remove it', color: colors.blue },
             { title: 'React = describing the result', note: '"there are 3 crates", React does the rest', color: colors.accent },
-            { title: 'Combine them yourself?', note: "you'd end up rebuilding R3F", color: colors.muted },
+            { title: 'React was built for this', note: 'react-dom gives the page its orders', color: colors.accent },
+            { title: 'R3F = the same idea for 3D', note: 'it gives Three.js its orders for you', color: colors.accent },
         ],
     },
     {
