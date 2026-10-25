@@ -1,69 +1,109 @@
 import { useState } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { useScroll, Text, Line } from '@react-three/drei'
+import { useScroll, Text } from '@react-three/drei'
+import Media from './Media'
 import { colors } from './theme'
+
+const single = { spots: [[0, -0.6, 0]], size: [11, 7.2] }
+const row = { spots: [[-3.7, 0.4, 0], [0, 0.4, 0], [3.7, 0.4, 0]], size: [3.4, 4.2] }
+const grid = { spots: [[-2.85, 2, 0], [2.85, 2, 0], [0, -2.1, 0]], size: [5.2, 2.7] }
 
 
 const steps = [
-    { title: 'Explore', note: 'what can R3F do?' },
-    { title: 'Basics', note: 'docs + how it uses Three.js' },
-    { title: 'Tutorials', note: 'small demos, built along' },
-    { title: 'Case study', note: 'Atmos: Three.js vs R3F' },
-    { title: 'Experiments', note: '5 libraries + research log' },
-    { title: 'Demo', note: 'this presentation' },
+    {
+        title: 'Explore',
+        points: ['Looked at finished R3F projects first', 'Configurators, portfolios, galleries', 'Why R3F: 3D that lives inside a React site'],
+        media: [
+            { src: '/research/example1.png', caption: 'Product configurator: AF1 Studio', why: 'React UI and 3D shoe share one state' },
+            { src: '/research/example2.png', caption: 'Portfolio: Unfor Dev', why: '3D hero inside a normal React website' },
+            { src: '/research/example3.png', caption: 'Interactive gallery: pmndrs', why: 'drei helpers: scroll + images in a few lines' },
+        ],
+        layout: grid,
+
+    },
+    {
+        title: 'Basics',
+        points: ['R3F docs: Canvas, hooks, events', 'How R3F works together with Three.js', 'Articles: CreativeDevJobs, ICS MEDIA'],
+        media: [],
+        layout: single,
+    },
+    {
+        title: 'Tutorials',
+        points: ['Small demos by Wawa Sensei and Three.js Journey', 'Built along to learn the structure', 'Followed his Atmos rebuild series'],
+        media: [
+            { src: '/research/atmos1.png', caption: 'Wawa Sensei tutorial: the code' },
+            { src: '/research/atmos2.png', caption: 'Wawa Sensei tutorial: the result' },
+            { src: '/research/atmos3.png', caption: 'Awwwards case study: Atmos' },
+        ],
+        layout: grid,
+    },
+    {
+        title: 'Case study',
+        points: ['Atmos: Three.js + GSAP vs the R3F rebuild', "Read Wawa Sensei's real code on GitHub"],
+        media: [],
+        layout: single,
+    },
+    {
+        title: 'Experiments',
+        points: ['Tried drei, leva, rapier, postprocessing and gltfjsx', 'Logged what was easy and confusing', 'Found a bug: R3F 9.8 broke drei scrolling'],
+        media: [
+            { src: '/research/leva.mp4', caption: 'leva' },
+            { src: '/research/rapier.mp4', caption: 'rapier' },
+            { src: '/research/bloom.mp4', caption: 'postprocessing' },
+        ],
+        layout: row,
+    },
+    {
+        title: 'Demo',
+        points: ['Friday: a first rough skeleton', 'Then: stops, pages, sky and the demo', 'This presentation is the result'],
+        media: [{ src: '/research/skeleton.mp4' }],
+        layout: single,
+    },
 ]
-
-const SPACING = 5.5
-const START_X = -7.5 - ((steps.length - 1) * SPACING) / 2
-
-function Station({ x, number, title, note, reached }) {
-    const color = reached ? colors.accent : '#c9d3df'
-
-    return (
-        <group position={[x, 0, 0]}>
-            <mesh rotation={[Math.PI / 2, 0, 0]}>
-                <cylinderGeometry args={[0.9, 0.9, 0.3, 32]} />
-                <meshStandardMaterial color={color} />
-            </mesh>
-            <Text position={[0, 0, 0.2]} fontSize={0.7} color="white">
-                {number}
-            </Text>
-            <Text position={[0, -1.3, 0]} fontSize={0.65} color={colors.ink} anchorY="top">
-                {title}
-            </Text>
-            <Text position={[0, -2.2, 0]} fontSize={0.42} maxWidth={5.2} textAlign="center" color={colors.muted} anchorY="top">
-                {note}
-            </Text>
-        </group>
-    )
-}
 
 export default function ResearchApproach() {
     const scroll = useScroll()
-    const [reached, setReached] = useState(0)
+    const [step, setStep] = useState(0)
 
     useFrame(() => {
-        const count = Math.ceil(scroll.range(0.6, 0.07) * steps.length)
-        if (count !== reached) setReached(count)
+        const current = Math.min(Math.floor(scroll.range(0.59, 0.15) * steps.length), steps.length - 1)
+        if (current !== step) setStep(current)
     })
 
-    const linePoints = [
-        [START_X, 0, -0.1],
-        [START_X + (steps.length - 1) * SPACING, 0, -0.1],
-    ]
+    const { title, points, media, layout } = steps[step]
+    const [maxWidth, maxHeight] = layout.size
 
     return (
-        <group position={[0, 5, 0]}>
-            <Line points={linePoints} color="#c4c4c4" lineWidth={2} />
-            {steps.map((step, index) => (
-                <Station
-                    key={step.title}
-                    x={START_X + index * SPACING}
-                    number={index + 1}
-                    title={step.title}
-                    note={step.note}
-                    reached={index < reached}
-                />
+        <group>
+            <Text position={[-5.4, 4.6, 0]} fontSize={0.45} anchorX="left" anchorY="top" color={colors.accent}>
+                {`${step + 1} / ${steps.length}   ${title}`}
+            </Text>
+
+            <Text position={[-16.8, 1.4, -0.3]} fontSize={0.46} lineHeight={1.45} maxWidth={10} anchorX="left" anchorY="top" color={colors.ink}>
+                {points.map((point) => `• ${point}`).join('\n')}
+            </Text>
+
+            {media.length === 0 && (
+                <group position={layout.spots[0]}>
+                    <Media src={null} maxWidth={maxWidth} maxHeight={maxHeight} />
+                </group>
+            )}
+
+            {media.map((item, index) => (
+                <group key={item.src} position={layout.spots[index]}>
+                    <Media src={item.src} maxWidth={maxWidth} maxHeight={maxHeight} />
+                    {item.caption && (
+                        <Text position={[0, -maxHeight / 2 - 0.15, 0]} fontSize={0.3} anchorY="top" color={colors.ink}>
+                            {item.caption}
+                        </Text>
+                    )}
+                    {item.why && (
+                        <Text position={[0, -maxHeight / 2 - 0.58, 0]} fontSize={0.26} anchorY="top" color={colors.muted}>
+                            {item.why}
+                        </Text>
+                    )}
+
+                </group>
             ))}
         </group>
     )

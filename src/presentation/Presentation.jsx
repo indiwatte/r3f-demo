@@ -51,8 +51,19 @@ const titles = [
         source: 'r3f.docs.pmnd.rs, leva',
     },
 
-    { title: 'Comparison' },
-    { title: 'Research approach' },
+    {
+        title: 'Comparison',
+        points: [],
+
+        source: 'Awwwards case study, wawasensei.dev, github.com/wass08/r3f-wawatmos-final',
+    },
+
+    {
+        title: 'My research',
+        points: [],
+        source: 'my Notion research log, R3F docs, Wawa Sensei',
+    },
+
     { title: 'The demo' },
     { title: 'Conclusion' },
     { title: 'Thank you!', subtitle: 'Questions?' },
@@ -61,7 +72,9 @@ const titles = [
 const CHAPTER_COUNT = 7
 const FINALE = 7
 
-const HOLD = [0.035, 0.035, 0.07, 0.035, 0.035, 0.05, 0.035]
+const HOLD = [0.035, 0.035, 0.07, 0.06, 0.08, 0.05, 0.035]
+
+
 
 function flight(offset) {
     for (let i = 0; i < CHAPTER_COUNT; i++) {
@@ -175,7 +188,8 @@ function Chapter({ index, titleX, titleY = 9, titleColor = '#111', fade = true, 
 
         const opacity = scroll.offset > 0.97 ? 1 : Math.min(fadeIn, fadeOut)
 
-        ref.current.visible = opacity > 0
+        ref.current.visible = fade ? opacity > 0 : opacity >= 1
+
         if (hasPage) {
             const open = distance < 0 ? clamp01(1 + distance / 0.05) : 1
             hinge.current.rotation.x = -(1 - open) * Math.PI * 0.45
