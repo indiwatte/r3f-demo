@@ -45,7 +45,7 @@ const steps = [
             { title: 'You need to know React', note: 'hooks, state and refs come first', color: colors.sun },
             { title: 'Snippets are not standalone', note: 'imports, lights and components missing', color: colors.sun },
             { title: 'gltfjsx: meaningless names', note: 'name your parts in Blender first', color: colors.sun },
-            { title: 'Libraries can break each other', note: 'R3F 9.8 broke drei scrolling: pin versions', color: colors.sun },
+            { title: 'Updates can break things', note: 'an R3F update stopped my scrolling', color: colors.sun },
         ],
     },
     {
@@ -53,7 +53,7 @@ const steps = [
         points: [
             'R3F changes how much setup you write, not what you build',
             'State for what is in the scene, refs for what moves',
-            'Libraries depend on each other: pin your versions',
+            'Lock the versions that work together',
         ],
         references: [
             'R3F docs: r3f.docs.pmnd.rs',
