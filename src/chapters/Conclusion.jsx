@@ -64,6 +64,7 @@ const steps = [
             'Three.js Journey: threejs-journey.com',
             'CreativeDevJobs: R3F vs Three.js',
             'ICS MEDIA: R3F introduction',
+            'Spaceship model: Quaternius (CC0)',
         ],
     },
 ]
