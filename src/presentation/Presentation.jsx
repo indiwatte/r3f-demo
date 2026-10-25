@@ -25,6 +25,8 @@ import { Leva } from 'leva'
 import { colors } from './theme'
 
 import { curve, CHAPTER_COUNT, FINALE, clamp01, flight, stopDistance, chapterPlacement, toWorld } from '../utils/path'
+import { titles } from '../data/chapters'
+
 
 
 
@@ -32,42 +34,6 @@ configureTextBuilder({ defaultFontURL: bodyFont })
 
 
 
-const titles = [
-    { title: 'React Three Fiber', subtitle: 'Scroll to begin' },
-    {
-        title: 'What is R3F?',
-        points: ['A React renderer for Three.js', 'Write 3D scenes as JSX components', 'It is Three.js underneath: every tag becomes a Three.js object'],
-        source: 'r3f.docs.pmnd.rs',
-    },
-
-    {
-        title: 'Core features',
-        points: ['Components + props: reusable 3D building blocks', 'Hooks: useFrame, useThree, useGLTF', 'Events: onClick directly on 3D objects', 'State: React state drives the scene'],
-        source: 'r3f.docs.pmnd.rs, leva',
-    },
-
-    {
-        title: 'Comparison',
-        points: [],
-
-        source: 'Awwwards case study, wawasensei.dev, github.com/wass08/r3f-wawatmos-final',
-    },
-
-    {
-        title: 'My research',
-        points: [],
-        source: 'my Notion research log, R3F docs, Wawa Sensei',
-    },
-
-    { title: 'The demo' },
-    {
-        title: 'Conclusion',
-        points: [],
-        source: 'my research, see the references',
-    },
-
-    { title: 'Thank you!', subtitle: 'Questions?' },
-]
 
 const demoCamera = toWorld(5, [-12, 3, 16])
 const demoLookAt = toWorld(5, [-12, -7, 0])
@@ -268,9 +234,10 @@ function Sky({ night }) {
 
 function Plane() {
     const ref = useRef()
+    const bank = useRef()
     const scroll = useScroll()
 
-    useFrame(() => {
+    useFrame((state, delta) => {
         const progress = flight(scroll.offset)
         const point = curve.getPointAt(progress)
         const tangent = curve.getTangentAt(progress)
@@ -278,16 +245,21 @@ function Plane() {
         ref.current.position.copy(point)
         ref.current.lookAt(point.clone().add(tangent))
 
+        const ahead = curve.getTangentAt(Math.min(progress + 0.01, 1))
+        const turn = tangent.x * ahead.z - tangent.z * ahead.x
+        const targetBank = Math.max(-0.6, Math.min(0.6, turn * 3))
+        easing.damp(bank.current.rotation, 'z', targetBank, 0.3, delta)
     })
 
     return (
         <group ref={ref}>
-            <Spaceship scale={0.6} />
-
+            <group ref={bank}>
+                <Spaceship scale={0.6} />
+            </group>
         </group>
     )
-
 }
+
 
 function CameraRig() {
     const scroll = useScroll()
