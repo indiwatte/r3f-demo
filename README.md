@@ -6,7 +6,7 @@ A 10-minute presentation about **React Three Fiber (R3F)**, built in React Three
 
 ## How to run it
 
-You need [Node.js](https://nodejs.org/) 18 or newer.
+You need [Node.js](https://nodejs.org/) 20.19 or newer.
 
 ```sh
 npm install
