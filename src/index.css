@@ -4,3 +4,73 @@ body,
   height: 100%;
   margin: 0;
 }
+
+.demo-ui {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: system-ui, sans-serif;
+}
+
+.demo-ui button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #222;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.demo-ui span {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #222;
+  color: white;
+}
+
+.progress {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  pointer-events: none;
+}
+
+.progress-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgba(29, 36, 51, 0.15);
+}
+
+.progress-fill {
+  height: 100%;
+  background: #ff4f7b;
+  transition: width 0.5s;
+}
+
+.progress-dot {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid rgba(29, 36, 51, 0.25);
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.progress-dot.reached {
+  background: #ff4f7b;
+  border-color: #ff4f7b;
+}
