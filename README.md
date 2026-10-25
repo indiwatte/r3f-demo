@@ -2,7 +2,7 @@
 
 A 10-minute presentation about **React Three Fiber (R3F)**, built in React Three Fiber itself. You fly a spaceship along a curved path past 7 chapters, inspired by the Awwwards website [Atmos](https://atmos.leeroy.ca/).
 
-[your name] · Capita selecta · October 2026
+Indi Watté · Capita selecta · October 2026
 
 ## How to run it
 
@@ -66,4 +66,4 @@ React, React Three Fiber, drei, rapier (physics), postprocessing, leva, gltfjsx,
 - **Inspiration:** Atmos by LEEROY ([Awwwards case study](https://www.awwwards.com/case-study-atmos.html)) and Wawa Sensei's R3F rebuild ([wawasensei.dev](https://wawasensei.dev))
 - **Fonts:** Unbounded, Inter and JetBrains Mono (all free, via Fontsource)
 
-The full list of sources is in the PDF of the presentation.
+The full list of sources are in my notion research pages

@@ -21,7 +21,7 @@ import WhatIsR3F from './chapters/WhatIsR3F'
 import CoreFeatures from './chapters/CoreFeatures'
 import Comparison from './chapters/Comparison'
 import ResearchApproach from './chapters/ResearchApproach'
-import Hangar from './chapters/Hangar'
+import Demo from './chapters/Demo'
 import Conclusion from './chapters/Conclusion'
 import { colors } from './utils/theme'
 
@@ -88,7 +88,7 @@ export default function Presentation() {
                         <ResearchApproach />
                     </Chapter>
                     <Chapter index={5} titleX={-12} titleY={-1} titleColor={night ? 'white' : '#111'} fade={false}>
-                        <Hangar crates={crates} night={night} active={demoActive} onKick={setKicked} />
+                        <Demo crates={crates} night={night} active={demoActive} onKick={setKicked} />
                     </Chapter>
                     <Chapter index={6}>
                         <Conclusion />

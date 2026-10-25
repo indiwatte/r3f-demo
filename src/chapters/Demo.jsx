@@ -52,7 +52,7 @@ function Lamp({ position, night }) {
 
 
 
-export default function Hangar({ crates, night, active, onKick }) {
+export default function Demo({ crates, night, active, onKick }) {
     return (
         <Physics paused={!active}>
 
