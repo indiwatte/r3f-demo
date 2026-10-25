@@ -7,15 +7,17 @@ export default function Progress({ current }) {
     return (
         <nav className="progress">
             <div className="progress-track">
-                <div className="progress-fill" style={{ width: `${(reached / (CHAPTER_COUNT - 1)) * 100}%` }} />
+                <div className="progress-fill" style={{ height: `${(reached / (CHAPTER_COUNT - 1)) * 100}%` }} />
             </div>
-            {titles.slice(0, CHAPTER_COUNT).map((item, index) => (
-                <div
-                    key={item.title}
-                    title={item.title}
-                    className={index <= reached ? 'progress-dot reached' : 'progress-dot'}
-                />
-            ))}
+            {titles.slice(0, CHAPTER_COUNT).map((item, index) => {
+                const state = index === reached ? 'current reached' : index < reached ? 'reached' : ''
+                return (
+                    <div key={item.title} className={`progress-step ${state}`}>
+                        <span>{item.title}</span>
+                        <div className="progress-dot" />
+                    </div>
+                )
+            })}
         </nav>
     )
 }

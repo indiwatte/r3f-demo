@@ -72,7 +72,7 @@ const steps = [
     },
     {
         title: 'Documentation',
-        points: ['Planned my 3 weeks in Notion', 'Kept a list of every source I used', 'The plan changed: tequila machine became this demo'],
+        points: ['structured named files to document my research','Planned my 3 weeks in Notion', 'Kept a list of every source I used', 'The plan changed sometimes'],
         media: [
             { src: '/research/notion-planning.png', caption: 'My planning in Notion', why: 'tasks per week, with a goal and status' },
             { src: '/research/notion-sources.png', caption: 'My sources in Notion', why: 'every source with what I used it for' },

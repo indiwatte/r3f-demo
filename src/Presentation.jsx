@@ -97,7 +97,7 @@ export default function Presentation() {
 
             <Progress current={currentTitle} />
 
-            <Leva hidden={currentTitle !== 2} titleBar={{ position: { x: 0, y: 140 } }} />
+            <Leva hidden={currentTitle !== 2} titleBar={{ position: { x: -190, y: 545 } }} />
 
             {demoActive && (
                 <div className="demo-ui">
