@@ -5,15 +5,47 @@ Model: "Spaceship" by Quaternius (https://quaternius.com), Public Domain (CC0)
 */
 
 import React from 'react'
-import { useGLTF } from '@react-three/drei'
 
-export function Spaceship(props) {
+
+import { useMemo } from 'react'
+import { useGLTF } from '@react-three/drei'
+import { CanvasTexture } from 'three'
+
+// The texture is a palette of 16x16 swatches; the window uses swatch (1, 13).
+function createWindowMask() {
+  const canvas = document.createElement('canvas')
+  canvas.width = 512
+  canvas.height = 512
+  const context = canvas.getContext('2d')
+  context.fillStyle = 'black'
+  context.fillRect(0, 0, 512, 512)
+  context.fillStyle = 'white'
+  context.fillRect(16, 208, 16, 16)
+
+  const texture = new CanvasTexture(canvas)
+  texture.flipY = false
+  return texture
+}
+
+export function Spaceship({ glow = 0, ...props }) {
   const { nodes, materials } = useGLTF('/spaceship.glb')
+  const windowMask = useMemo(() => createWindowMask(), [])
+
   return (
     <group {...props} dispose={null}>
-      <mesh geometry={nodes.Spaceship_BarbaraTheBee.geometry} material={materials.Atlas} scale={100} />
+      <mesh geometry={nodes.Spaceship_BarbaraTheBee.geometry} scale={100}>
+        <meshStandardMaterial
+          map={materials.Atlas.map}
+          metalness={0.4}
+          roughness={1}
+          emissive="#5fe3ff"
+          emissiveMap={windowMask}
+          emissiveIntensity={glow}
+        />
+      </mesh>
     </group>
   )
 }
 
 useGLTF.preload('/spaceship.glb')
+

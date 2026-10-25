@@ -1,6 +1,11 @@
+import { useRef, useState } from 'react'
+import { useFrame } from '@react-three/fiber'
+import { useCursor } from '@react-three/drei'
+
 import { Physics, RigidBody } from '@react-three/rapier'
+import { MathUtils } from 'three'
 import { Spaceship } from '../components/Spaceship'
-import { useRef } from 'react'
+
 
 
 
@@ -13,6 +18,9 @@ const shapes = {
 
 function Crate({ id, shape, position, onKick }) {
     const body = useRef()
+    const [hovered, setHovered] = useState(false)
+    useCursor(hovered)
+
     const { colliders, color, geometry } = shapes[shape]
 
     function kick(event) {
@@ -24,7 +32,8 @@ function Crate({ id, shape, position, onKick }) {
 
     return (
         <RigidBody ref={body} position={position} colliders={colliders}>
-            <mesh onClick={kick}>
+            <mesh onClick={kick} onPointerOver={() => setHovered(true)} onPointerOut={() => setHovered(false)}>
+
                 {geometry}
                 <meshStandardMaterial color={color} />
             </mesh>
@@ -50,6 +59,46 @@ function Lamp({ position, night }) {
     )
 }
 
+function ParkedShip({ night }) {
+    const body = useRef()
+    const start = useRef(null)
+    const height = useRef(0)
+    const [flying, setFlying] = useState(false)
+    const [hovered, setHovered] = useState(false)
+    useCursor(hovered)
+
+
+    useFrame((state, delta) => {
+        if (!body.current) return
+        start.current ??= { ...body.current.translation() }
+
+        const hover = Math.sin(state.clock.elapsedTime * 2) * 0.3
+        const target = flying ? 3 + hover : 0
+        height.current = MathUtils.damp(height.current, target, 2, delta)
+
+        const { x, y, z } = start.current
+        body.current.setNextKinematicTranslation({ x, y: y + height.current, z })
+    })
+
+    function toggle(event) {
+        event.stopPropagation()
+        setFlying(!flying)
+    }
+
+    return (
+        <RigidBody ref={body} type="kinematicPosition" colliders="hull">
+            <Spaceship
+                position={[-12, -6.75, 0]}
+                glow={night ? 6 : 0}
+                onClick={toggle}
+                onPointerOver={() => setHovered(true)}
+                onPointerOut={() => setHovered(false)}
+            />
+
+        </RigidBody>
+    )
+}
+
 
 
 export default function Demo({ crates, night, active, onKick }) {
@@ -62,11 +111,8 @@ export default function Demo({ crates, night, active, onKick }) {
                     <meshStandardMaterial color="#8a8f98" />
                 </mesh>
             </RigidBody>
+            <ParkedShip night={night} />
 
-            <RigidBody type="fixed" colliders="hull">
-                <Spaceship position={[-12, -6.75, 0]} />
-
-            </RigidBody>
 
             <Lamp position={[-22, -8.75, -5]} night={night} />
             <Lamp position={[-2, -8.75, -5]} night={night} />

@@ -46,10 +46,10 @@ const steps = [
     },
     {
         title: 'Case study',
-        points: ['Atmos (by LEEROY): Three.js, Blender, GSAP', 'Path: a Catmull-Rom curve, the same class I use', 'Scroll: they wrote their own library, R3F has drei useScroll', "Read Wawa Sensei's real R3F code on GitHub"],
+        points: ['Atmos (by LEEROY): Three.js, Blender, GSAP', 'Path: a Catmull-Rom curve, the same class I use', 'Scroll: a library by their own developer, R3F has drei useScroll', "Read Wawa Sensei's real R3F code on GitHub"],
         media: [
             { src: '/research/casestudy1.png', caption: 'Awwwards: following a path', why: 'Catmull-Rom curve, the same Three.js class as mine' },
-            { src: '/research/casestudy2.png', caption: 'Awwwards: the tech stack', why: 'Three.js, Blender, GSAP + a custom scroll library' },
+            { src: '/research/casestudy2.png', caption: 'Awwwards: the tech stack', why: 'Three.js, Blender, GSAP + an in-house scroll library' },
         ],
         layout: pair,
 
