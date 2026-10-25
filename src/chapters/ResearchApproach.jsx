@@ -66,7 +66,7 @@ const steps = [
     },
     {
         title: 'Demo',
-        points: ['Friday: a first rough skeleton', 'Then: stops, pages, sky and the demo', 'This presentation is the result'],
+        points: [' A first rough skeleton', 'Then: stops, pages, sky and the demo'],
         media: [{ src: '/research/skeleton.mp4' }],
         layout: single,
     },
